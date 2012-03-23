@@ -3,8 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     
-	<shoppe.android.shoppeview
-      android:id="@+id/lunar"
+	<shoppe.android.ShoppeView
+      android:id="@+id/shoppe"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"/>
     

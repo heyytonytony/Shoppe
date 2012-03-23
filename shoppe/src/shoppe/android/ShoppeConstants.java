@@ -34,6 +34,11 @@ public final class ShoppeConstants {
 	public static final int productionLimit = 5;
 	public static final int skillLimit = 10;
 	
+	/** Defines tile identities **/
+	public static final int plainTile = 0;
+	public static final int counterTile = 1;
+	public static final int obstructionTile = 2;
+	
 	public static int getSubtypes(int elementType) {
 		return numSubtypes[elementType];
 	}
