@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World, ShoppeActivity!</string>
     <string name="app_name">Shoppe</string>
-
+	<string name="pause">Pause</string>
+	<string name="play">Play</string>
 </resources>

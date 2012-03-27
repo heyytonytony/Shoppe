@@ -7,13 +7,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 
-public class ShoppeView extends SurfaceView implements Callback
-{
+public class ShoppeView extends SurfaceView implements Callback {
 
 	private ShoppeThread thread;
 
-	public ShoppeView(Context context, AttributeSet attrs)
-	{
+	public ShoppeView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
 		// register interest in hearing about changes to surface
@@ -28,29 +26,24 @@ public class ShoppeView extends SurfaceView implements Callback
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent mEvent)
-	{
+	public boolean onTouchEvent(MotionEvent mEvent) {
 		// the finger, it poketh!
 		return true;
 	}
-	
-	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-	{
-		// TODO Auto-generated method stub
 
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		thread.setSurfaceSize(width, height);
 	}
 
 	@Override
-	public void surfaceCreated(SurfaceHolder holder)
-	{
+	public void surfaceCreated(SurfaceHolder holder) {
 		// start the thread here so that we don't busy-wait in run()
-		try
-		{
+		try {
 			thread.start();
-		}
-		catch(Exception ex)
-		{
+		} catch (Exception ex) {
 			thread = new ShoppeThread(getHolder(), getContext(), getHandler());
 			thread.start();
 		}
@@ -58,22 +51,17 @@ public class ShoppeView extends SurfaceView implements Callback
 	}
 
 	@Override
-	public void surfaceDestroyed(SurfaceHolder holder)
-	{
+	public void surfaceDestroyed(SurfaceHolder holder) {
 
 		// we have to tell thread to shut down & wait for it to finish, or else
 		// it might touch the Surface after we return and explode
 
 		boolean retry = true;
-		while(retry)
-		{
-			try
-			{
+		while (retry) {
+			try {
 				thread.join();
 				retry = false;
-			}
-			catch(InterruptedException ie)
-			{
+			} catch (InterruptedException ie) {
 			}
 		}
 

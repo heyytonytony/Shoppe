@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.graphics.Bitmap;
@@ -23,6 +24,20 @@ public class ShoppeThread extends Thread
 	private static int tileWidth = 100;
 	/** Pixel height of tiles **/
 	private static int tileHeight = 100;
+    /** The proportions of the grid width with respect to screen size **/
+	private static double gridWidthProportion = 0.75;
+	/** The proportions of the grid height with respect to screen size **/
+	private static double gridHeightProportion = 0.75;
+	
+	/** The offset (spacing) of the grid drawing from the left of the screen **/
+	private static int offsetX;
+	/** The offset (spacing) of the grid drawing from the top of the screen **/
+	private static int offsetY;
+	
+	/** Width of the screen **/
+	private static int screenWidth;
+	/** Height of the screen **/
+	private static int screenHeight;
 	
     /** The drawable to use as the background of the animation canvas */
     private Bitmap backgroundBitmap;
@@ -37,8 +52,11 @@ public class ShoppeThread extends Thread
     
     /** Drawable representing an open tile **/
     private Drawable plainTile;
-    /** Drawable reperesnting a countertop tile **/
+    /** Drawable representing a countertop tile **/
     private Drawable counterTile;
+    /** Drawable representing an exclamation bubble **/
+    private Drawable exclamationBubble;
+    
     /**
      * Current height of the surface/canvas.
      * 
@@ -71,6 +89,7 @@ public class ShoppeThread extends Thread
 		patronDrawable = context.getResources().getDrawable(R.drawable.patron);
 		plainTile = context.getResources().getDrawable(R.drawable.tile);
 		counterTile = context.getResources().getDrawable(R.drawable.countertile);
+		exclamationBubble = context.getResources().getDrawable(R.drawable.exclamation);
 		init();
 	}
 	
@@ -80,7 +99,9 @@ public class ShoppeThread extends Thread
 		tiles[1][2] = 1;
 		
 		tiles[4][4] = 1;
-		patronList.add(new Patron());
+		patronList.add(new Patron(3, 4, ShoppeConstants.potion, 100));
+		patronList.add(new Patron(2, 3, ShoppeConstants.armor,100));
+		patronList.getLast().exclamation = true;
 	}
 	
     /* Callback invoked when the surface dimensions change. */
@@ -93,10 +114,15 @@ public class ShoppeThread extends Thread
             // don't forget to resize the background image
             backgroundBitmap = backgroundBitmap.createScaledBitmap(
             		backgroundBitmap, width, height, true);
-            tileHeight = height/gridHeight;
+            tileHeight = (int) (height*gridHeightProportion/gridHeight);
             tileWidth = tileHeight;
+            screenWidth = width;
+            screenHeight = height;
+            offsetX = (screenWidth-tileWidth*gridWidth)/2;
+            offsetY = (screenHeight-tileHeight*gridHeight)/2;
         }
     }
+    
 	@Override
 	public void run() {
 		Canvas canvas = null;
@@ -113,14 +139,13 @@ public class ShoppeThread extends Thread
 		}
 	}
 	
-	private void draw(Canvas canvas) {
-		canvas.drawBitmap(backgroundBitmap,0,0,null);
+	private void drawGrid(Canvas canvas) {
 		int tileX, tileY;
-		
 		for (int i=0; i<gridHeight; i++) {
-			for (int j=0; j<gridHeight; j++) {
-				tileX = j*tileWidth;
-				tileY = i*tileHeight;
+			for (int j=0; j<gridWidth; j++) {
+				//calculates the tile position within the grid, then adds an offset to center in screen
+				tileX = j*tileWidth+offsetX;
+				tileY = i*tileHeight+offsetY;
 				//Log.v("stuffs","i: " + i + " j: " + j + " tile: " + tiles[j][i] + " tileX: " + tileX + " tileY: " + tileY);
 				switch (tiles[i][j]) {
 				case ShoppeConstants.plainTile:
@@ -134,14 +159,37 @@ public class ShoppeThread extends Thread
 				}
 			}
 		}
-		
+	}
+	
+	private void drawPatrons(Canvas canvas) {
+		int xloc, yloc;
 		Iterator<Patron> iterator = patronList.iterator();
 		Patron p;
+		//draw the patrons
 		while (iterator.hasNext()) {
 			p = iterator.next();
-			patronDrawable.setBounds(200,200,300,300);
+			xloc = p.xpos*tileWidth+offsetX;
+			yloc = p.ypos*tileHeight+offsetY;
+			patronDrawable.setBounds(xloc,yloc,xloc+tileWidth,yloc+tileHeight);
 			patronDrawable.draw(canvas);
 		}
+		//draw the patron's exclamations
+		iterator = patronList.iterator();
+		while (iterator.hasNext()) {
+			p = iterator.next();
+			if (p.exclamation == true) {
+				xloc = p.xpos*tileWidth+offsetX;
+				yloc = p.ypos*tileHeight+offsetY;
+				exclamationBubble.setBounds(xloc+tileWidth/2,yloc,xloc+tileWidth,yloc+tileHeight/2);
+				exclamationBubble.draw(canvas);
+			}
+		}
+	}
+	
+	private void draw(Canvas canvas) {
+		canvas.drawBitmap(backgroundBitmap,0,0,null);
 		
+		drawGrid(canvas);
+		drawPatrons(canvas);
 	}
 }

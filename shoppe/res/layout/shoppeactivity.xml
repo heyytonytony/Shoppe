@@ -1,26 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    
-	<shoppe.android.ShoppeView
-      android:id="@+id/shoppe"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"/>
-    
+    android:layout_height="fill_parent" >
+
+    <shoppe.android.ShoppeView
+        android:id="@+id/shoppe"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
+		<Button
+		    android:id="@+id/pauseButton"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentTop="true"
+		    android:text="@string/pause"
+		    android:onClick="pauseButton" />
+		<Button
+		    android:id="@+id/artisan0"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentBottom="true"
+		    android:text="Artisan 0"
+		    android:onClick="artisanButton" />
+		<Button
+		    android:id="@+id/artisan1"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_toRightOf="@id/artisan0"
+		    android:layout_alignParentBottom="true"
+		    android:text="Artisan 1"
+		    android:onClick="artisanButton" />
+		<Button
+		    android:id="@+id/artisan2"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_toRightOf="@id/artisan1"
+		    android:layout_alignParentBottom="true"
+		    android:text="Artisan 2"
+		    android:onClick="artisanButton" />
+		<Button
+		    android:id="@+id/artisan3"
+		    android:layout_height="wrap_content"
+		    android:layout_width="wrap_content"
+		    android:layout_toRightOf="@id/artisan2"
+		    android:layout_alignParentBottom="true"
+		    android:text="Artisan 3"
+		    android:onClick="artisanButton" />
+		
         <TextView
-          android:id="@+id/text"
-		  android:text=""
-		  android:visibility="visible"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_centerInParent="true"
-          android:gravity="center_horizontal"
-          android:textColor="#88ffffff"
-          android:textSize="24sp"/>
-     </RelativeLayout>
-         
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:text=""
+            android:textColor="#88ffffff"
+            android:textSize="24sp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
 </FrameLayout>
