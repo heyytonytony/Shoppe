@@ -26,6 +26,11 @@ public class ShoppeView extends SurfaceView implements Callback
 
 		setFocusable(true);
 	}
+	
+	public ShoppeThread getThread()
+	{
+		return thread;
+	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent mEvent)
@@ -48,11 +53,13 @@ public class ShoppeView extends SurfaceView implements Callback
 		try
 		{
 			thread.start();
+			thread.setRunning(true);
 		}
 		catch(Exception ex)
 		{
 			thread = new ShoppeThread(getHolder(), getContext(), getHandler());
 			thread.start();
+			thread.setRunning(true);
 		}
 
 	}
@@ -65,6 +72,7 @@ public class ShoppeView extends SurfaceView implements Callback
 		// it might touch the Surface after we return and explode
 
 		boolean retry = true;
+		thread.setRunning(false);
 		while(retry)
 		{
 			try

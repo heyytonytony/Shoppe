@@ -16,6 +16,10 @@ import android.graphics.drawable.Drawable;
 
 public class ShoppeThread extends Thread
 {
+	
+	 /** Indicate whether the surface has been created and is ready to draw */
+    private boolean mRun = false;
+	
 	/** Width of the grid of gridElements **/
 	private static int gridWidth = 8;
 	/** Height of the grid of gridElements **/
@@ -47,8 +51,8 @@ public class ShoppeThread extends Thread
 
 	/** Drawable representing a patron **/
 	private Drawable patronDrawable;
-	/** Drawable representing an artisan **/
-	private Drawable artisanDrawable;
+	/** Drawable representing the artisans **/
+	private Drawable[] artisanDrawable;
 
 	/** Drawable representing an open tile **/
 	private Drawable plainTile;
@@ -116,7 +120,7 @@ public class ShoppeThread extends Thread
 			canvasHeight = height;
 
 			// don't forget to resize the background image
-			backgroundBitmap = backgroundBitmap.createScaledBitmap(backgroundBitmap, width, height, true);
+			backgroundBitmap = Bitmap.createScaledBitmap(backgroundBitmap, width, height, true);
 			tileHeight = (int)(height * gridHeightProportion / gridHeight);
 			tileWidth = tileHeight;
 			screenWidth = width;
@@ -129,22 +133,30 @@ public class ShoppeThread extends Thread
 	@Override
 	public void run()
 	{
-		Canvas canvas = null;
-		try
+		while(mRun)
 		{
-			canvas = surfaceHolder.lockCanvas(null);
-			synchronized(surfaceHolder)
+			Canvas canvas = null;
+			try
 			{
-				draw(canvas);
+				canvas = surfaceHolder.lockCanvas(null);
+				synchronized(surfaceHolder)
+				{
+					draw(canvas);
+				}
+			}
+			finally
+			{
+				if(canvas != null)
+				{
+					surfaceHolder.unlockCanvasAndPost(canvas);
+				}
 			}
 		}
-		finally
-		{
-			if(canvas != null)
-			{
-				surfaceHolder.unlockCanvasAndPost(canvas);
-			}
-		}
+	}
+	
+	public void setRunning(boolean b)
+	{
+		mRun = b;
 	}
 
 	private void drawGrid(Canvas canvas)

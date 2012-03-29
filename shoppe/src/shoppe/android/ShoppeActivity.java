@@ -19,6 +19,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	
 	private float oldTouchValue;
 	private ShoppeView shoppeView;
+	private ShoppeThread shoppeThread;
 	private ViewFlipper viewFlipper;
 	private ImageView inv;
 
@@ -33,6 +34,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 		
 		shoppeView = (ShoppeView)findViewById(R.id.shoppeView);
+		shoppeThread = shoppeView.getThread();
 		viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper);
         findViewById(R.id.hide_inv).setOnTouchListener(this);
         findViewById(R.id.show_inv).setOnTouchListener(this);
@@ -47,10 +49,12 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		if(button.getText().toString().equals(getResources().getString(R.string.pause)))
 		{
 			button.setText(getResources().getString(R.string.play));
+			shoppeThread.setRunning(true);
 		}
 		else
 		{
 			button.setText(getResources().getString(R.string.pause));
+			shoppeThread.setRunning(false);
 		}
 	}
 
