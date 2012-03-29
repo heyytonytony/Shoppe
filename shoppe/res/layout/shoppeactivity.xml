@@ -14,70 +14,68 @@
         android:layout_height="fill_parent">
         
         <RelativeLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent" >
-			<Button
-			    android:id="@+id/pauseButton"
-			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
-			    android:layout_alignParentLeft="true"
-			    android:layout_alignParentTop="true"
-			    android:text="@string/pause"
-			    android:onClick="pauseButton" />
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
 			<Button
 			    android:id="@+id/artisan0Button"
-			    android:layout_height="wrap_content"
 			    android:layout_width="wrap_content"
-			    android:layout_alignParentLeft="true"
+			    android:layout_height="wrap_content"
 			    android:layout_alignParentTop="true"
-			    android:text="Artisan 0"
-			    android:onClick="artisanButton" />
-			<Button
-			    android:id="@+id/artisan1Button"
-			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
 			    android:layout_alignParentRight="true"
-			    android:layout_alignParentTop="true"
-			    android:text="Artisan 1"
-			    android:onClick="artisanButton" />
-			<Button
-			    android:id="@+id/artisan2Button"
-			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
-			    android:layout_alignParentLeft="true"
-			    android:layout_alignParentBottom="true"
-			    android:text="Artisan 2"
-			    android:onClick="artisanButton" />
-			<Button
-			    android:id="@+id/artisan3Button"
-			    android:layout_height="wrap_content"
-			    android:layout_width="wrap_content"
-			    android:layout_alignParentRight="true"
-			    android:layout_alignParentBottom="true"
-			    android:text="Artisan 3"
-			    android:onClick="artisanButton" />
-	        <TextView
-	            android:id="@+id/textView"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_centerInParent="true"
-	            android:gravity="center_horizontal"
-	            android:text=""
-	            android:textColor="#88ffffff"
-	            android:textSize="24sp"
-	            android:visibility="visible" />
-	        <Button
-	            android:id="@+id/show_invButton"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_alignParentBottom="true"
-	            android:layout_centerHorizontal="true"
-	            android:text="Store Inventory" />
-		</RelativeLayout>
+			    android:onClick="artisanButton"
+			    android:text="Artisan 0" />
+
+            <Button
+                android:id="@+id/artisan1Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/artisan0Button"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="42dp"
+                android:onClick="artisanButton"
+                android:text="Artisan 1" />
+
+            <Button
+                android:id="@+id/artisan2Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/artisan3Button"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="42dp"
+                android:onClick="artisanButton"
+                android:text="Artisan 2" />
+
+            <Button
+                android:id="@+id/artisan3Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:onClick="artisanButton"
+                android:text="Artisan 3" />
+
+            <ImageView
+                android:id="@+id/show_inv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/si_arrow" />
+
+            <Button
+                android:id="@+id/pauseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:onClick="pauseButton"
+                android:text="@string/pause" />
+        </RelativeLayout>
     
     	<RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent">
 	        <GridView xmlns:android="http://schemas.android.com/apk/res/android" 
 			    android:id="@+id/invView"
 			    android:layout_width="fill_parent" 
@@ -87,16 +85,15 @@
 			    android:verticalSpacing="10dp"
 			    android:horizontalSpacing="10dp"
 			    android:stretchMode="columnWidth"
-			    android:gravity="center"
-			/>
+			    android:gravity="center" />
 	        
-       		<Button
-	            android:id="@+id/hide_invButton"
+	      	<ImageView
+	            android:id="@+id/hide_inv"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentTop="true"
 	            android:layout_centerHorizontal="true"
-	            android:text="Hide Inventory" />
+	            android:background="@drawable/rtg_arrow"/>
         </RelativeLayout>
     </ViewFlipper>
 

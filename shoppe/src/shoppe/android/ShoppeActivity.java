@@ -10,6 +10,7 @@ import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -19,7 +20,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private float oldTouchValue;
 	private ShoppeView shoppeView;
 	private ViewFlipper viewFlipper;
-	private Button invButton;
+	private ImageView inv;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -33,8 +34,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		
 		shoppeView = (ShoppeView)findViewById(R.id.shoppeView);
 		viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper);
-        findViewById(R.id.hide_invButton).setOnTouchListener(this);
-        findViewById(R.id.show_invButton).setOnTouchListener(this);
+        findViewById(R.id.hide_inv).setOnTouchListener(this);
+        findViewById(R.id.show_inv).setOnTouchListener(this);
 	}
 
 	public void pauseButton(View view)
@@ -60,7 +61,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 	private boolean onButtonTouchEvent(MotionEvent mEvent)
     {
-        if (invButton == null)
+        if (inv == null)
             return false;
         switch (mEvent.getAction())
         {
@@ -73,14 +74,14 @@ public class ShoppeActivity extends Activity implements OnTouchListener
             {
                 float currentY = mEvent.getY();
                 final float diff = oldTouchValue - currentY;
-                if ((diff < -100) && (invButton.getId() == R.id.hide_invButton))
+                if ((diff < -100) && (inv.getId() == R.id.hide_inv))
                 {
                     //Up --> Bottom
                     viewFlipper.setInAnimation(AccordionAnimation.inFromTopAnimation());
                     viewFlipper.setOutAnimation(AccordionAnimation.outToBottomAnimation());
                     viewFlipper.showNext();
                 }
-                else if ((diff > 100) && (invButton.getId() == R.id.show_invButton))
+                else if ((diff > 100) && (inv.getId() == R.id.show_inv))
                 {
                     //Bottom --> Up
                     viewFlipper.setInAnimation(AccordionAnimation.inFromBottomAnimation());
@@ -90,14 +91,14 @@ public class ShoppeActivity extends Activity implements OnTouchListener
                 break;
             }
         }
-        invButton = null;
+        inv = null;
         return true;
     }
 	
 	@Override
 	public boolean onTouch(View view, MotionEvent mEvent)
 	{
-		invButton = (Button)view;
+		inv = (ImageView)view;
         final boolean result = this.onButtonTouchEvent(mEvent);
         return result;
 	}
