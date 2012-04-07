@@ -39,6 +39,12 @@ public final class ShoppeConstants {
 	public static final int counterTile = 1;
 	public static final int obstructionTile = 2;
 	
+	//Defines movement directions
+	public static final int up = 0;
+	public static final int down = 1;
+	public static final int left = 2;
+	public static final int right = 3;
+	
 	public static int getSubtypes(int elementType) {
 		return numSubtypes[elementType];
 	}

@@ -85,6 +85,14 @@ public class ShoppeThread extends Thread
 	private LinkedList<Artisan> artisanList = new LinkedList<Artisan>();
 
 	private SurfaceHolder surfaceHolder = null;
+	
+	/** Used to keep track of update cycles **/
+	private long beginTime;
+	
+	private boolean[][] tileOccupied = new boolean[gridHeight][gridWidth];
+	
+	/** The amount of time in seconds that patron positions are updated **/
+	private static int patronUpdateInterval = 2;
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -100,6 +108,7 @@ public class ShoppeThread extends Thread
 
 	public void init()
 	{
+		beginTime = System.currentTimeMillis();
 		// testing draw method
 		tiles[1][1] = 1;
 		tiles[1][2] = 1;
@@ -108,6 +117,12 @@ public class ShoppeThread extends Thread
 		patronList.add(new Patron(3, 4, ShoppeConstants.potion, 100));
 		patronList.add(new Patron(2, 3, ShoppeConstants.armor, 100));
 		patronList.getLast().exclamation = true;
+		
+		for (int i = 0; i < gridHeight; i++) {
+			for (int j = 0; j < gridWidth; j++) {
+				tileOccupied[i][j] = false;
+			}
+		}
 	}
 
 	/* Callback invoked when the surface dimensions change. */
@@ -129,6 +144,55 @@ public class ShoppeThread extends Thread
 			offsetY = (screenHeight - tileHeight * gridHeight) / 2;
 		}
 	}
+	
+	private void patronUpdate() {
+		Iterator<Patron> iterator = patronList.iterator();
+		Patron patron;
+		boolean[] availableDirections = new boolean[4];
+		int xpos, ypos;
+		if (System.currentTimeMillis() > beginTime + patronUpdateInterval*1000) {
+			while (iterator.hasNext()) {
+				for (int i = 0; i < 4; i++) {
+					availableDirections[i] = false;
+				}
+				patron = iterator.next();
+				xpos = patron.xpos;
+				ypos = patron.ypos;
+				if (ypos-1 >= 0) {
+					availableDirections[ShoppeConstants.up] = !tileOccupied[ypos-1][xpos];
+				}
+				if (ypos+1 < gridHeight) {
+					availableDirections[ShoppeConstants.down] = !tileOccupied[ypos+1][xpos];
+				}
+				if (xpos-1 >= 0) {
+					availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos-1]; 
+				}
+				if (xpos+1 < gridWidth) {
+					availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos+1]; 
+				}
+				int moveDirection = patron.move(availableDirections);
+				if (moveDirection > -1) {	//update tileOccupied
+					tileOccupied[ypos][xpos] = false;
+					switch (moveDirection) {
+					case ShoppeConstants.up: 
+						tileOccupied[ypos-1][xpos] = true;
+						break;
+					case ShoppeConstants.down:
+						tileOccupied[ypos+1][xpos] = true;
+						break;
+					case ShoppeConstants.left:
+						tileOccupied[ypos][xpos-1] = true;
+						break;
+					case ShoppeConstants.right:
+						tileOccupied[ypos][xpos+1] = true;
+						break;
+					}
+				}
+				//else do nothing
+			}
+			beginTime = System.currentTimeMillis();
+		}
+	}
 
 	@Override
 	public void run()
@@ -136,6 +200,7 @@ public class ShoppeThread extends Thread
 		while(mRun)
 		{
 			Canvas canvas = null;
+			patronUpdate();
 			try
 			{
 				canvas = surfaceHolder.lockCanvas(null);
