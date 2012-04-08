@@ -116,6 +116,9 @@ public class ShoppeThread extends Thread
 	/** Paint to draw text background box **/
 	private Paint boxPaint = new Paint();
 	
+	/** Paint to draw border highlight **/
+	private Paint borderPaint = new Paint();
+	
 	/** Selected tile from user input to be highlighted **/
 	private int selectedX, selectedY;
 	
@@ -151,6 +154,11 @@ public class ShoppeThread extends Thread
 		
 		//initialize boxPaint
 		boxPaint.setARGB(255, 220, 220, 120);
+		
+
+		borderPaint.setStyle(Paint.Style.STROKE);
+		borderPaint.setStrokeWidth(2);
+		borderPaint.setColor(Color.BLACK);
 		
 		// testing draw method
 		//set counter tiles
@@ -330,10 +338,8 @@ public class ShoppeThread extends Thread
 		if (selectedX > -1 && selectedY > -1) {
 			tileX = selectedX*tileWidth + offsetX;
 			tileY = selectedY*tileHeight + offsetY;
-			boxPaint.setStyle(Paint.Style.STROKE);
-			boxPaint.setStrokeWidth(2);
-			boxPaint.setColor(Color.YELLOW);
-			canvas.drawRect(tileX, tileY, tileX+tileWidth, tileY+tileHeight, boxPaint);
+			borderPaint.setColor(Color.YELLOW);
+			canvas.drawRect(tileX, tileY, tileX+tileWidth, tileY+tileHeight, borderPaint);
 		}
 	}
 
@@ -373,10 +379,9 @@ public class ShoppeThread extends Thread
 		drawGrid(canvas);
 		drawPatrons(canvas);
 		//border
-		boxPaint.setARGB(255, 0, 0, 0);
-		canvas.drawRect(8, 8, tileWidth*2+2, 20+tileHeight/2+2, boxPaint);
+		borderPaint.setColor(Color.BLACK);
+		canvas.drawRect(8, 8, tileWidth*2+2, 20+tileHeight/2+2, borderPaint);
 		//background
-		boxPaint.setARGB(255, 120, 220, 220);
 		canvas.drawRect(10, 10, tileWidth*2, 20+tileHeight/2, boxPaint);
 		//text
 		canvas.drawText("Funds: " + funds, 20, tileHeight/2, textPaint);
