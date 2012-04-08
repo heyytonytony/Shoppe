@@ -14,6 +14,7 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
@@ -114,6 +115,12 @@ public class ShoppeThread extends Thread
 	
 	/** Paint to draw text background box **/
 	private Paint boxPaint = new Paint();
+	
+	/** Selected tile from user input to be highlighted **/
+	private int selectedX, selectedY;
+	
+	/** The patron currently engaged by the user **/
+	private Patron interactingPatron;
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -124,6 +131,7 @@ public class ShoppeThread extends Thread
 		plainTile = context.getResources().getDrawable(R.drawable.tile);
 		counterTile = context.getResources().getDrawable(R.drawable.countertile);
 		exclamationBubble = context.getResources().getDrawable(R.drawable.exclamation);
+		selectedX=selectedY=-1;
 		init();
 	}
 
@@ -263,23 +271,25 @@ public class ShoppeThread extends Thread
 	@Override
 	public void run()
 	{
-		while(mRun)
+		while(true)
 		{
-			Canvas canvas = null;
-			patronUpdate();
-			try
-			{
-				canvas = surfaceHolder.lockCanvas(null);
-				synchronized(surfaceHolder)
+			if (mRun) {
+				patronUpdate();
+				Canvas canvas = null;
+				try
 				{
-					draw(canvas);
+					canvas = surfaceHolder.lockCanvas(null);
+					synchronized(surfaceHolder)
+					{
+						draw(canvas);
+					}
 				}
-			}
-			finally
-			{
-				if(canvas != null)
+				finally
 				{
-					surfaceHolder.unlockCanvasAndPost(canvas);
+					if(canvas != null)
+					{
+						surfaceHolder.unlockCanvasAndPost(canvas);
+					}
 				}
 			}
 		}
@@ -315,6 +325,15 @@ public class ShoppeThread extends Thread
 						break;
 				}
 			}
+		}
+		//draw selected tile highlight
+		if (selectedX > -1 && selectedY > -1) {
+			tileX = selectedX*tileWidth + offsetX;
+			tileY = selectedY*tileHeight + offsetY;
+			boxPaint.setStyle(Paint.Style.STROKE);
+			boxPaint.setStrokeWidth(2);
+			boxPaint.setColor(Color.YELLOW);
+			canvas.drawRect(tileX, tileY, tileX+tileWidth, tileY+tileHeight, boxPaint);
 		}
 	}
 
@@ -374,6 +393,13 @@ public class ShoppeThread extends Thread
 			inputY = event.getY();
 			//Log.v("onTouch","getX: " + inputX + " getY: " + inputY);
 			//determine if input event is within the bounds of the grid
+			if (interactingPatron != null) {
+				interactingPatron.endInteraction();
+				interactingPatron = null;
+				//TODO: call interactingPatron.endInteraction() in the appropriate place
+				selectedX = -1;
+				selectedY = -1;
+			}
 			if (inputX >= offsetX && inputY > offsetY && inputX < offsetX+gridWidth*tileWidth && inputY < offsetY+gridHeight*tileHeight) {
 				//find the corresponding tile location
 				tileX = (int) ((1.0*inputX-offsetX)/tileWidth);
@@ -388,8 +414,14 @@ public class ShoppeThread extends Thread
 						while (iterator.hasNext()) {
 							patron = iterator.next();
 							if (patron.xpos == tileX && patron.ypos == tileY) {
-								patron.startInteraction();
-								patron.endInteraction();
+								//highlight the tile
+								selectedX=tileX;
+								selectedY=tileY;
+								//start interaction
+								interactingPatron = patron;
+								if (patron.startInteraction()) {
+									interactingPatron = patron;
+								}
 								break;
 							}
 						}

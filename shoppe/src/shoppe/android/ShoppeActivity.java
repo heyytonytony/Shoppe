@@ -49,12 +49,12 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		if(button.getText().toString().equals(getResources().getString(R.string.pause)))
 		{
 			button.setText(getResources().getString(R.string.play));
-			shoppeThread.setRunning(true);
+			shoppeThread.setRunning(false);
 		}
 		else
 		{
 			button.setText(getResources().getString(R.string.pause));
-			shoppeThread.setRunning(false);
+			shoppeThread.setRunning(true);
 		}
 	}
 
