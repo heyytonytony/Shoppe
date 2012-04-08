@@ -8,15 +8,17 @@ import android.content.res.Resources;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
 public class ShoppeThread extends Thread
 {
-	
 	 /** Indicate whether the surface has been created and is ready to draw */
     private boolean mRun = false;
 	
@@ -83,6 +85,9 @@ public class ShoppeThread extends Thread
 
 	/** The list of artisans working in the shop **/
 	private LinkedList<Artisan> artisanList = new LinkedList<Artisan>();
+	
+	/** The list of items owned by the player **/
+	private LinkedList<Item> inventoryList = new LinkedList<Item>();
 
 	private SurfaceHolder surfaceHolder = null;
 	
@@ -92,7 +97,23 @@ public class ShoppeThread extends Thread
 	private boolean[][] tileOccupied = new boolean[gridHeight][gridWidth];
 	
 	/** The amount of time in seconds that patron positions are updated **/
-	private static int patronUpdateInterval = 2;
+	private static final int patronUpdateInterval = 2;
+	
+	/** Global list of possible items **/
+	private LinkedList<Item> itemList = new LinkedList<Item>();
+	
+	/** Defines how input is handled based on integer states **/
+	private int inputMode;
+	/** inputMode state where the user selects patrons **/
+	private static final int DEFAULT_INPUT = 0;
+	/** inputMode state where the user is placing an item on the shop floor **/
+	private static final int PLACEITEM_INPUT = 1;
+	
+	/** Paint to draw text **/
+	private Paint textPaint = new Paint();
+	
+	/** Paint to draw text background box **/
+	private Paint boxPaint = new Paint();
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -109,20 +130,50 @@ public class ShoppeThread extends Thread
 	public void init()
 	{
 		beginTime = System.currentTimeMillis();
-		// testing draw method
-		tiles[1][1] = 1;
-		tiles[1][2] = 1;
-
-		tiles[4][4] = 1;
-		patronList.add(new Patron(3, 4, ShoppeConstants.potion, 100));
-		patronList.add(new Patron(2, 3, ShoppeConstants.armor, 100));
-		patronList.getLast().exclamation = true;
-		
+		//initialize occupied tiles on grid
 		for (int i = 0; i < gridHeight; i++) {
 			for (int j = 0; j < gridWidth; j++) {
 				tileOccupied[i][j] = false;
 			}
 		}
+		//initialize textPaint
+		textPaint.setStyle(Paint.Style.FILL);
+		textPaint.setAntiAlias(true);
+		textPaint.setTextSize(tileHeight/4);
+		
+		//initialize boxPaint
+		boxPaint.setARGB(255, 220, 220, 120);
+		
+		// testing draw method
+		//set counter tiles
+		tiles[1][1] = 1;
+		tiles[1][2] = 1;
+		tiles[4][4] = 1;
+		
+		//add patrons
+		addPatron(new Patron(3, 4, ShoppeConstants.potion, 100));
+		addPatron(new Patron(2, 3, ShoppeConstants.armor, 100));
+		
+		//test
+		patronList.getLast().exclamation = true;
+		
+		//let's make some items
+		itemList.add(new Item(-1,-1,ShoppeConstants.weapon, ShoppeConstants.flail, 20, 4, 3, "Flail of Truthiness"));
+		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.kite, 55, 5, 2, "Mangled Kite Armor"));
+		itemList.add(new Item(-1, -1, ShoppeConstants.potion, ShoppeConstants.poison, 100, 6, 5, "PBDE"));
+		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.blah, 102, 4, 5, "Chipped Blah"));
+		
+	}
+	
+	public boolean addPatron(Patron patron) {
+		if (patron.xpos >= 0 && patron.xpos < gridWidth && patron.ypos >= 0 && patron.ypos < gridHeight
+				&& !tileOccupied[patron.ypos][patron.xpos]) {
+			patronList.add(patron);
+			tileOccupied[patron.ypos][patron.xpos] = true;
+			return true;
+		}
+		//else
+		return false;
 	}
 
 	/* Callback invoked when the surface dimensions change. */
@@ -142,6 +193,8 @@ public class ShoppeThread extends Thread
 			screenHeight = height;
 			offsetX = (screenWidth - tileWidth * gridWidth) / 2;
 			offsetY = (screenHeight - tileHeight * gridHeight) / 2;
+
+			textPaint.setTextSize(tileHeight/4);
 		}
 	}
 	
@@ -156,42 +209,55 @@ public class ShoppeThread extends Thread
 					availableDirections[i] = false;
 				}
 				patron = iterator.next();
-				xpos = patron.xpos;
-				ypos = patron.ypos;
-				if (ypos-1 >= 0) {
-					availableDirections[ShoppeConstants.up] = !tileOccupied[ypos-1][xpos];
-				}
-				if (ypos+1 < gridHeight) {
-					availableDirections[ShoppeConstants.down] = !tileOccupied[ypos+1][xpos];
-				}
-				if (xpos-1 >= 0) {
-					availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos-1]; 
-				}
-				if (xpos+1 < gridWidth) {
-					availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos+1]; 
-				}
-				int moveDirection = patron.move(availableDirections);
-				if (moveDirection > -1) {	//update tileOccupied
-					tileOccupied[ypos][xpos] = false;
-					switch (moveDirection) {
-					case ShoppeConstants.up: 
-						tileOccupied[ypos-1][xpos] = true;
-						break;
-					case ShoppeConstants.down:
-						tileOccupied[ypos+1][xpos] = true;
-						break;
-					case ShoppeConstants.left:
-						tileOccupied[ypos][xpos-1] = true;
-						break;
-					case ShoppeConstants.right:
-						tileOccupied[ypos][xpos+1] = true;
-						break;
+				//only potentially move patrons that are not interacting with the user
+				if (patron.interacting == false) {
+					xpos = patron.xpos;
+					ypos = patron.ypos;
+					if (ypos-1 >= 0) {
+						availableDirections[ShoppeConstants.up] = !tileOccupied[ypos-1][xpos];
+					}
+					if (ypos+1 < gridHeight) {
+						availableDirections[ShoppeConstants.down] = !tileOccupied[ypos+1][xpos];
+					}
+					if (xpos-1 >= 0) {
+						availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos-1]; 
+					}
+					if (xpos+1 < gridWidth) {
+						availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos+1]; 
+					}
+					int moveDirection = patron.move(availableDirections);
+					if (moveDirection > -1) {	//update tileOccupied
+						tileOccupied[ypos][xpos] = false;
+						switch (moveDirection) {
+						case ShoppeConstants.up: 
+							tileOccupied[ypos-1][xpos] = true;
+							break;
+						case ShoppeConstants.down:
+							tileOccupied[ypos+1][xpos] = true;
+							break;
+						case ShoppeConstants.left:
+							tileOccupied[ypos][xpos-1] = true;
+							break;
+						case ShoppeConstants.right:
+							tileOccupied[ypos][xpos+1] = true;
+							break;
+						}
 					}
 				}
 				//else do nothing
 			}
 			beginTime = System.currentTimeMillis();
 		}
+	}
+	
+	public boolean buyItem(Item item) {
+		if (funds-item.value >= 0) {
+			funds -= item.value;
+			inventoryList.add(item);
+			return true;
+		}
+		//else
+		return false;
 	}
 
 	@Override
@@ -287,5 +353,56 @@ public class ShoppeThread extends Thread
 
 		drawGrid(canvas);
 		drawPatrons(canvas);
+		//border
+		boxPaint.setARGB(255, 0, 0, 0);
+		canvas.drawRect(8, 8, tileWidth*2+2, 20+tileHeight/2+2, boxPaint);
+		//background
+		boxPaint.setARGB(255, 120, 220, 220);
+		canvas.drawRect(10, 10, tileWidth*2, 20+tileHeight/2, boxPaint);
+		//text
+		canvas.drawText("Funds: " + funds, 20, tileHeight/2, textPaint);
+	}
+
+	public boolean onTouch(MotionEvent event) {
+		float inputX, inputY;
+		int tileX, tileY;
+		Iterator<Patron> iterator;
+		Patron patron;
+		//Log.v("onTouch","Input event " + event.getAction());
+		if (event.getAction() == MotionEvent.ACTION_DOWN){	//pressing input is received
+			inputX = event.getX();
+			inputY = event.getY();
+			//Log.v("onTouch","getX: " + inputX + " getY: " + inputY);
+			//determine if input event is within the bounds of the grid
+			if (inputX >= offsetX && inputY > offsetY && inputX < offsetX+gridWidth*tileWidth && inputY < offsetY+gridHeight*tileHeight) {
+				//find the corresponding tile location
+				tileX = (int) ((1.0*inputX-offsetX)/tileWidth);
+				tileY = (int) ((1.0*inputY-offsetY)/tileHeight);
+				//Log.v("onTouch","x: " + tileX + " y: " + tileY);
+				switch (inputMode) {
+				case DEFAULT_INPUT:
+					//determine if there might exist a patron at the given tile
+					if (tileOccupied[tileY][tileX]) {
+						//search through patron list for potential patron at this location
+						iterator = patronList.iterator();
+						while (iterator.hasNext()) {
+							patron = iterator.next();
+							if (patron.xpos == tileX && patron.ypos == tileY) {
+								patron.startInteraction();
+								patron.endInteraction();
+								break;
+							}
+						}
+					}
+					break;
+				case PLACEITEM_INPUT:
+					//TODO: implement item placement on shop floor
+					break;
+				}
+			}
+			return true;
+		}
+		//else
+		return false;
 	}
 }

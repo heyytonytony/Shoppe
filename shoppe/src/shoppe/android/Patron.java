@@ -10,6 +10,8 @@ public class Patron extends GridElement
 	boolean exclamation = false;
 	/** The probability that a patron will move from their current tile **/
 	double movementProbability = 0.5;
+	/** Describes if the patron is currently interacting with the user **/
+	boolean interacting = false;
 
 	public Patron()
 	{
@@ -21,6 +23,13 @@ public class Patron extends GridElement
 		super(xpos, ypos, elementType);
 		this.wealth = wealth;
 	}
+	public int forceMove(boolean[] availableDirections) { 
+		double savedMovementProbability = movementProbability;
+		movementProbability = 1;
+		int chosenDirection = move(availableDirections);
+		movementProbability = savedMovementProbability;
+		return chosenDirection;
+	}
 	public int move(boolean[] availableDirections) {
 		//System.out.println("Movement from " + xpos + "," + ypos);
 		double[] directionProbability = new double[4];
@@ -29,7 +38,7 @@ public class Patron extends GridElement
 		int chosenDirection = -1;
 		//determine if it is time to move
 		if (Math.random() < movementProbability) {
-			System.out.println("updating patrons");
+			//System.out.println("updating patrons");
 			for (int i = 0; i < 4; i++) {
 				if (availableDirections[i] == true) {
 					numDirections++;
@@ -77,5 +86,25 @@ public class Patron extends GridElement
 		}
 		//else
 		return -1;
+	}
+	/**
+	 * invoked when a patron is selected by the user
+	 * @return determines if the patron is interested in interacting with the user eg. if the patron wants to barter
+	 */
+	public boolean startInteraction() {
+		if (exclamation) {
+			//TODO: implement patron interaction/bartering
+			interacting = true;
+			exclamation = false;
+		}
+		return false;
+	}
+	
+	/**
+	 * invoked when a patron has finished interaction with user
+	 */
+	public void endInteraction() {
+		interacting = false;
+		//TODO: implement
 	}
 }

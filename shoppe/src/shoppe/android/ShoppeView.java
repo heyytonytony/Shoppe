@@ -2,6 +2,7 @@ package shoppe.android;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -36,7 +37,8 @@ public class ShoppeView extends SurfaceView implements Callback
 	public boolean onTouchEvent(MotionEvent mEvent)
 	{
 		// the finger, it poketh!
-		return true;
+		//Log.v("ShoppeView onTouch","x:" + mEvent.getX() + " y:" + mEvent.getY());
+    	return thread.onTouch(mEvent);
 	}
 
 	@Override
