@@ -53,7 +53,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		findViewById(R.id.show_inv).setOnTouchListener(this);
 		
 		GridView invView = (GridView)findViewById(R.id.invView);
-		inventoryAdapter = new ImageAdapter(this);
+		inventoryAdapter = shoppeThread.getInventoryAdapter();
 	    invView.setAdapter(inventoryAdapter);
 	    invView.setOnItemClickListener(new OnItemClickListener()
 	    {

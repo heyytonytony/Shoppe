@@ -125,6 +125,9 @@ public class ShoppeThread extends Thread
 
 	/** The patron currently engaged by the user **/
 	private Patron interactingPatron;
+	
+	/** Current inventory */
+	ImageAdapter inventoryAdapter;
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -135,6 +138,7 @@ public class ShoppeThread extends Thread
 		plainTile = context.getResources().getDrawable(R.drawable.tile);
 		counterTile = context.getResources().getDrawable(R.drawable.countertile);
 		exclamationBubble = context.getResources().getDrawable(R.drawable.exclamation);
+		inventoryAdapter = new ImageAdapter(context);
 		selectedX = selectedY = -1;
 		init();
 	}
@@ -472,5 +476,10 @@ public class ShoppeThread extends Thread
 		}
 		// else
 		return false;
+	}
+
+	public ImageAdapter getInventoryAdapter()
+	{
+		return inventoryAdapter;
 	}
 }

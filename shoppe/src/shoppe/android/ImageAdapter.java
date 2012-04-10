@@ -11,19 +11,31 @@ public class ImageAdapter extends BaseAdapter
 {
 	
 	 private Context mContext;
-	 private int[] items = {R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-			 R.drawable.patron, R.drawable.patron, R.drawable.patron};
+	 private int[] items;
 	 
 	 public ImageAdapter(Context context)
 	 {
 		 mContext = context;
+		 int[] pics = {R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
+				 R.drawable.patron, R.drawable.patron, R.drawable.patron};
+		 items = pics;
 	 }
 
 	@Override
