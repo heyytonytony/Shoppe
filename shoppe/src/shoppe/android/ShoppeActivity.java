@@ -15,9 +15,13 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 public class ShoppeActivity extends Activity implements OnTouchListener
@@ -29,6 +33,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ViewFlipper viewFlipper;
 	private ImageView inv;
 	private Dialog dia = null;
+	private ImageAdapter inventoryAdapter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -42,9 +47,23 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 		shoppeView = (ShoppeView)findViewById(R.id.shoppeView);
 		shoppeThread = shoppeView.getThread();
+		
 		viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper);
 		findViewById(R.id.hide_inv).setOnTouchListener(this);
 		findViewById(R.id.show_inv).setOnTouchListener(this);
+		
+		GridView invView = (GridView)findViewById(R.id.invView);
+		inventoryAdapter = new ImageAdapter(this);
+	    invView.setAdapter(inventoryAdapter);
+	    invView.setOnItemClickListener(new OnItemClickListener()
+	    {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+	        {
+	            Toast.makeText(shoppeView.getContext(), "" + position, Toast.LENGTH_SHORT).show();
+	        }
+	    });
+
+
 	}
 
 	public void pauseButton(View view)
@@ -89,21 +108,6 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		}
 	}
 	
-	public void artisanMgmt(View view)
-	{
-		Button btn = (Button)view;
-		if(btn.getId() == R.id.artCreateItem)
-		{
-			Log.d("Artisan Management", "Artisan 1 item management");
-			shoppeThread.setRunning(false);
-		}
-		if(btn.getId() == R.id.artDone)
-		{
-			shoppeThread.setRunning(true);
-			dia.dismiss();
-		}
-	}
-
 	private boolean onButtonTouchEvent(MotionEvent mEvent)
 	{
 		if(inv == null)
