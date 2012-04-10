@@ -5,10 +5,23 @@
     android:layout_width="wrap_content"
     android:layout_height="fill_parent">
     
-    <TextView android:id="@+id/text"
-		android:layout_width="wrap_content"
-		android:layout_height="fill_parent"
-		android:textColor="#FFF" />
+    <Button
+        android:id="@+id/artCreateItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Create Item">
+        
+    </Button>
+    
+    <Button
+        android:id="@+id/artDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Done">
+        
+    </Button>
     
     
 </RelativeLayout>

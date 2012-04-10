@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,6 +28,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ShoppeThread shoppeThread;
 	private ViewFlipper viewFlipper;
 	private ImageView inv;
+	private Dialog dia = null;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -59,7 +62,6 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 	public void artisanButton(View view)
 	{
-		// TODO:Implement artisanButton
 		Button button = (Button)view;
 		if(button.getId() == R.id.artisan0Button)
 		{
@@ -86,6 +88,21 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 			shoppeThread.setRunning(false);
 		}
 	}
+	
+	public void artisanMgmt(View view)
+	{
+		Button btn = (Button)view;
+		if(btn.getId() == R.id.artCreateItem)
+		{
+			Log.d("Artisan Management", "Artisan 1 item management");
+			shoppeThread.setRunning(false);
+		}
+		if(btn.getId() == R.id.artDone)
+		{
+			shoppeThread.setRunning(true);
+			dia.dismiss();
+		}
+	}
 
 	private boolean onButtonTouchEvent(MotionEvent mEvent)
 	{
@@ -105,6 +122,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				if((diff < -100) && (inv.getId() == R.id.hide_inv))
 				{
 					// Up --> Bottom
+					shoppeThread.setRunning(true);
 					viewFlipper.setInAnimation(AccordionAnimation.inFromTopAnimation());
 					viewFlipper.setOutAnimation(AccordionAnimation.outToBottomAnimation());
 					viewFlipper.showNext();
@@ -112,6 +130,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				else if((diff > 100) && (inv.getId() == R.id.show_inv))
 				{
 					// Bottom --> Up
+					shoppeThread.setRunning(false);
 					viewFlipper.setInAnimation(AccordionAnimation.inFromBottomAnimation());
 					viewFlipper.setOutAnimation(AccordionAnimation.outToTopAnimation());
 					viewFlipper.showPrevious();
@@ -134,7 +153,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	protected Dialog onCreateDialog(int id)
 	{
 		Context mContext = shoppeView.getContext();
-		Dialog dia = null;
+		Button artCreateItem, artDone;
 		switch(id)
 		{
 			case 0:
@@ -158,10 +177,29 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 1 Management");
-
-				TextView text = (TextView) dia.findViewById(R.id.text);
-				text.setText("Hello, this is a custom dialog!");
-
+				
+				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//create item stuff
+						dia.dismiss();
+					}
+				});
+				
+				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
+						dia.dismiss();
+					}
+				});
 
 				break;
 				
@@ -171,8 +209,30 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 2 Management");
-				TextView text1 = (TextView) dia.findViewById(R.id.text);
-				text1.setText("Hello, this is a custom dialog!");
+				
+				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//create item stuff
+						dia.dismiss();
+					}
+				});
+				
+				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
+						dia.dismiss();
+					}
+				});
+
 				break;
 				
 			case 3:
@@ -181,8 +241,30 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 3 Management");
-				TextView text2 = (TextView) dia.findViewById(R.id.text);
-				text2.setText("Hello, this is a custom dialog!");
+				
+				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//create item stuff
+						dia.dismiss();
+					}
+				});
+				
+				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
+						dia.dismiss();
+					}
+				});
+
 				break;
 				
 			case 4:
@@ -191,8 +273,30 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 4 Management");
-				TextView text3 = (TextView) dia.findViewById(R.id.text);
-				text3.setText("Hello, this is a custom dialog!");
+				
+				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//create item stuff
+						dia.dismiss();
+					}
+				});
+				
+				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
+						dia.dismiss();
+					}
+				});
+
 				break;
 		}
 
