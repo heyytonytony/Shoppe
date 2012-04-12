@@ -24,7 +24,8 @@
 			    android:layout_alignParentTop="true"
 			    android:layout_alignParentRight="true"
 			    android:onClick="artisanButton"
-			    android:text="Artisan 1" />
+			    android:text="Artisan 1"
+			    android:visibility="invisible" />
 
             <Button
                 android:id="@+id/artisan1Button"
@@ -34,7 +35,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="42dp"
                 android:onClick="artisanButton"
-                android:text="Artisan 2" />
+                android:text="Artisan 2"
+			    android:visibility="invisible" />
 
             <Button
                 android:id="@+id/artisan2Button"
@@ -44,7 +46,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="42dp"
                 android:onClick="artisanButton"
-                android:text="Artisan 3" />
+                android:text="Artisan 3"
+			    android:visibility="invisible" />
 
             <Button
                 android:id="@+id/artisan3Button"
@@ -53,7 +56,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:onClick="artisanButton"
-                android:text="Artisan 4" />
+                android:text="Artisan 4"
+			    android:visibility="invisible" />
 
             <ImageView
                 android:id="@+id/show_inv"

@@ -1,6 +1,7 @@
 package shoppe.android;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,6 +13,7 @@ public class ShoppeView extends SurfaceView implements Callback
 {
 
 	private ShoppeThread thread;
+	private Handler handler;
 
 	public ShoppeView(Context context, AttributeSet attrs)
 	{
@@ -23,7 +25,7 @@ public class ShoppeView extends SurfaceView implements Callback
 		surfaceHolder.setSizeFromLayout();
 
 		// pre-create thread
-		thread = new ShoppeThread(surfaceHolder, getContext(), getHandler());
+		thread = new ShoppeThread(surfaceHolder, getContext(), handler);
 
 		setFocusable(true);
 	}
@@ -87,6 +89,11 @@ public class ShoppeView extends SurfaceView implements Callback
 			}
 		}
 
+	}
+	
+	public void setHandler(Handler handler)
+	{
+		this.handler = handler;
 	}
 
 }

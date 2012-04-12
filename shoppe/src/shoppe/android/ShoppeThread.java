@@ -86,6 +86,9 @@ public class ShoppeThread extends Thread
 
 	/** The list of artisans working in the shop **/
 	private LinkedList<Artisan> artisanList = new LinkedList<Artisan>();
+	
+	/** which slots have employed an artisan */
+	private boolean[] employedArtisan = new boolean[4];
 
 	/** The list of items owned by the player **/
 	private LinkedList<Item> inventoryList = new LinkedList<Item>();
@@ -127,7 +130,10 @@ public class ShoppeThread extends Thread
 	private Patron interactingPatron;
 	
 	/** Current inventory */
-	ImageAdapter inventoryAdapter;
+	private ImageAdapter inventoryAdapter;
+	
+	/** Handler */
+	private Handler handler;
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -139,6 +145,7 @@ public class ShoppeThread extends Thread
 		counterTile = context.getResources().getDrawable(R.drawable.countertile);
 		exclamationBubble = context.getResources().getDrawable(R.drawable.exclamation);
 		inventoryAdapter = new ImageAdapter(context);
+		this.handler = handler;
 		selectedX = selectedY = -1;
 		init();
 	}
@@ -481,5 +488,10 @@ public class ShoppeThread extends Thread
 	public ImageAdapter getInventoryAdapter()
 	{
 		return inventoryAdapter;
+	}
+	
+	public boolean[] getEmployed()
+	{
+		return employedArtisan;
 	}
 }

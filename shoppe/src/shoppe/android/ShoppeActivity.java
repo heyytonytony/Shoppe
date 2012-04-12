@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +36,15 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ImageView inv;
 	private Dialog dia = null;
 	private ImageAdapter inventoryAdapter;
+	private boolean[] employedArtisans;
+	
+	private final Handler handler = new Handler()
+	{
+		public void handleMessage(Message msg)
+		{
+			
+		}
+	};
 
 	/** Called when the activity is first created. */
 	@Override
@@ -62,18 +73,17 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	            Toast.makeText(shoppeView.getContext(), "" + position, Toast.LENGTH_SHORT).show();
 	        }
 	    });
-
+	    
+	    employedArtisans = shoppeThread.getEmployed();
 
 	}
 
 	public void pauseButton(View view)
 	{
-		// TODO:Complete pauseButton
-		// setContentView(R.layout.menuactivity);
 		Button button = (Button)view;
-		// toggle text displayed
 		if(button.getText().toString().equals(getResources().getString(R.string.pause)))
 		{
+			//showing paused dialog
 			showDialog(0);
 			shoppeThread.setRunning(false);
 		}
@@ -157,7 +167,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	protected Dialog onCreateDialog(int id)
 	{
 		Context mContext = shoppeView.getContext();
-		Button artCreateItem, artDone;
+		Button artCreateItem, artCancelItem, artDone;
 		switch(id)
 		{
 			case 0:
@@ -189,6 +199,18 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
+						dia.dismiss();
+					}
+				});
+				
+				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
 						dia.dismiss();
 					}
 				});
@@ -225,6 +247,18 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
+				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
+						dia.dismiss();
+					}
+				});
+				
 				artDone = (Button)dia.findViewById(R.id.artDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
@@ -257,6 +291,18 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
+				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
+						dia.dismiss();
+					}
+				});
+				
 				artDone = (Button)dia.findViewById(R.id.artDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
@@ -285,6 +331,18 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
+						dia.dismiss();
+					}
+				});
+				
+				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//dismiss dialog and unpause game
+						shoppeThread.setRunning(true);
 						dia.dismiss();
 					}
 				});
