@@ -150,7 +150,7 @@ public class ShoppeThread extends Thread
 	/** Current inventory */
 	private ImageAdapter inventoryAdapter;
 	
-	/** Handler */
+	/** Handler reference */
 	private Handler handler;
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
@@ -211,7 +211,7 @@ public class ShoppeThread extends Thread
 		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.blah, 102, 4, 5, "Chipped Blah"));
 		
 		//get an employee
-		//artisanList.add(new Artisan(artisanCount++));
+//		artisanList.add(new Artisan(artisanCount++));
 
 	}
 
@@ -271,6 +271,7 @@ public class ShoppeThread extends Thread
 		while (iterator.hasNext()) {
 			artisan = iterator.next();
 			if (id == artisan.id) {
+				Log.d("add item to production queue", "artisan" + id + " making item " + item.getItemName());
 				return artisan.addProduction(item);
 			}
 		}
@@ -564,11 +565,12 @@ public class ShoppeThread extends Thread
 									interactingPatron = patron;
 									//grab a psuedo-random item from the itemList
 									//potentially not in store inventory
-									int itemIndex = (itemList.size() - 1) % (int)(10*Math.random());
+									int itemIndex = (itemList.size() - 1) % (int)(Math.round(10*Math.random()+0.5));
 									Log.v("item generation", "itemIndex :" + itemIndex + " listSize: " + itemList.size());
 									
 									patronsItem = itemList.get(itemIndex);
 									Log.v("patronUpdate", "Added item " + itemList.get(itemIndex).name + " at index " + itemIndex);
+//									hireArtisan();//debuggery
 									if(patron.startInteraction())
 									{
 										interactingPatron = patron;
@@ -602,5 +604,20 @@ public class ShoppeThread extends Thread
 	public void setHandler(Handler handler)
 	{
 		this.handler = handler;
+	}
+	
+	public LinkedList<Item> getItemList()
+	{
+		return itemList;
+	}
+	
+	public CharSequence[] getItemCS()
+	{
+		CharSequence[] itemCS = new CharSequence[itemList.size()];
+		for(int i = 0; i < itemList.size(); i++)
+		{
+			itemCS[i] = itemList.get(i).getItemName();
+		}
+		return itemCS;
 	}
 }

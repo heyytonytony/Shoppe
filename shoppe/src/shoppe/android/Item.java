@@ -24,5 +24,9 @@ public class Item extends GridElement
 		this.productionCost = productionCost;
 		this.name = name;
 	}
-
+	
+	public String getItemName()
+	{
+		return name;
+	}
 }

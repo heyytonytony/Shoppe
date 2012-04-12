@@ -12,7 +12,10 @@ import android.view.SurfaceView;
 public class ShoppeView extends SurfaceView implements Callback
 {
 
+	/** Thread */
 	private ShoppeThread thread;
+	
+	/** Handler reference */
 	private Handler handler;
 
 	public ShoppeView(Context context, AttributeSet attrs)

@@ -1,5 +1,7 @@
 package shoppe.android;
 
+import java.util.LinkedList;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -34,9 +36,20 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ShoppeThread shoppeThread;
 	private ViewFlipper viewFlipper;
 	private ImageView inv;
-	private Dialog dia = null;
+	private Dialog dia = null, diaNest = null;
 	private ImageAdapter inventoryAdapter;
+	private LinkedList<Item> itemList;
+	private CharSequence[] itemCS;
 	private int[] artisanButtons;
+	
+	/** dialog IDs */
+	private static final int DIALOG_PAUSE = 0;
+	private static final int DIALOG_ARTISAN_1 = 1;
+	private static final int DIALOG_ARTISAN_2 = 2;
+	private static final int DIALOG_ARTISAN_3 = 3;
+	private static final int DIALOG_ARTISAN_4 = 4;
+	private static final int DIALOG_ADD_ITEM = 5;
+	private static final int DIALOG_REM_ITEM = 6;
 	
 	final Handler handler = new Handler()
 	{
@@ -50,7 +63,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				artisanButton.setVisibility(View.VISIBLE);
 				viewFlipper.showNext();
 				viewFlipper.showPrevious();
-				Log.d("hired artisan button", artisanButtons[msg.arg1] + "     " + R.id.artisan0Button);
+				Log.d("hired artisan button", artisanButtons[msg.arg1] + "");
 				return;
 				
 			case ShoppeConstants.FIRE_ARTISAN:
@@ -58,6 +71,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				artisanButton.setVisibility(View.INVISIBLE);
 				viewFlipper.showNext();
 				viewFlipper.showPrevious();
+				Log.d("fired artisan button", artisanButtons[msg.arg1] + "");
 				
 			default:
 				return;
@@ -98,6 +112,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	    int[] temp = {R.id.artisan0Button, R.id.artisan1Button, R.id.artisan2Button, R.id.artisan3Button};
 	    artisanButtons = temp;
 	    
+	    itemList = shoppeThread.getItemList();
+	    itemCS = shoppeThread.getItemCS();
 
 	}
 
@@ -107,7 +123,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		if(button.getText().toString().equals(getResources().getString(R.string.pause)))
 		{
 			//showing paused dialog
-			showDialog(0);
+			showDialog(DIALOG_PAUSE);
 			shoppeThread.setRunning(false);
 		}
 	}
@@ -118,25 +134,25 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		if(button.getId() == R.id.artisan0Button)
 		{
 			Log.d("Activity", "Artisan 1 pressed");
-			showDialog(1);
+			showDialog(DIALOG_ARTISAN_1);
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan1Button)
 		{
 			Log.d("Activity", "Artisan 2 pressed");
-			showDialog(2);
+			showDialog(DIALOG_ARTISAN_2);
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan2Button)
 		{
 			Log.d("Activity", "Artisan 3 pressed");
-			showDialog(3);
+			showDialog(DIALOG_ARTISAN_3);
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan3Button)
 		{
 			Log.d("Activity", "Artisan 4 pressed");
-			showDialog(4);
+			showDialog(DIALOG_ARTISAN_4);
 			shoppeThread.setRunning(false);
 		}
 	}
@@ -189,11 +205,11 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 	protected Dialog onCreateDialog(int id)
 	{
-		Context mContext = shoppeView.getContext();
+		final Context mContext = shoppeView.getContext();
 		Button artCreateItem, artCancelItem, artDone;
 		switch(id)
 		{
-			case 0:
+			case DIALOG_PAUSE:
 				// game paused
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage("Game paused!").setCancelable(false).setNeutralButton("Unpause!", new DialogInterface.OnClickListener()
@@ -208,7 +224,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia = alert;
 				break;
 
-			case 1:
+			case DIALOG_ARTISAN_1:
 				// artisan 1
 				dia = new Dialog(mContext);
 				
@@ -222,7 +238,21 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
-						dia.dismiss();
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 1 Create Item");
+						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        shoppeThread.addProduction(0, itemList.get(index));
+						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -232,9 +262,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					@Override
 					public void onClick(View v)
 					{
-						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
-						dia.dismiss();
+						//cancel item stuff
 					}
 				});
 				
@@ -252,7 +280,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 				break;
 				
-			case 2:
+			case DIALOG_ARTISAN_2:
 				// artisan 2
 				dia = new Dialog(mContext);
 				
@@ -266,7 +294,21 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
-						dia.dismiss();
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 2 Create Item");
+						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        shoppeThread.addProduction(1, itemList.get(index));
+						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -276,9 +318,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					@Override
 					public void onClick(View v)
 					{
-						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
-						dia.dismiss();
+						//cancel item stuff
 					}
 				});
 				
@@ -296,7 +336,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 				break;
 				
-			case 3:
+			case DIALOG_ARTISAN_3:
 				// artisan 3
 				dia = new Dialog(mContext);
 				
@@ -310,7 +350,21 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
-						dia.dismiss();
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 3 Create Item");
+						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        shoppeThread.addProduction(2, itemList.get(index));
+						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -320,9 +374,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					@Override
 					public void onClick(View v)
 					{
-						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
-						dia.dismiss();
+						//cancel item stuff
 					}
 				});
 				
@@ -340,7 +392,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 				break;
 				
-			case 4:
+			case DIALOG_ARTISAN_4:
 				// artisan 4
 				dia = new Dialog(mContext);
 				
@@ -354,7 +406,21 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
-						dia.dismiss();
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 4 Create Item");
+						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        shoppeThread.addProduction(3, itemList.get(index));
+						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -364,9 +430,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					@Override
 					public void onClick(View v)
 					{
-						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
-						dia.dismiss();
+						//cancel item stuff
 					}
 				});
 				
