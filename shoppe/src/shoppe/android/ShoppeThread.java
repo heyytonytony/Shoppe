@@ -573,7 +573,6 @@ public class ShoppeThread extends Thread
 									{
 										interactingPatron = patron;
 									}
-									if(hireArtisan()) Log.d("HIRING", "HIRING WORKS YO");
 									break;
 								}
 							}
