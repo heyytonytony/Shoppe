@@ -9,14 +9,16 @@ public class Artisan extends GridElement
 	LinkedList<Item> production = new LinkedList<Item>();
 	int numProduction = 0;
 	int productionProgress = 0;
-
-	public Artisan()
-	{
+	Item producedItem;
+	int id;
+	
+	public Artisan(int id) {
+		this.id = id;
 	}
 
-	public Artisan(int xpos, int ypos, int elementType)
-	{
+	public Artisan(int id, int xpos, int ypos, int elementType) {
 		super(xpos, ypos, elementType);
+		this.id = id;
 		skills = new int[ShoppeConstants.getSubtypes(elementType)];
 	}
 
@@ -25,7 +27,7 @@ public class Artisan extends GridElement
 	 * 
 	 * @return an Item object if production has finished, Null otherwise.
 	 */
-	public Item update()
+	public boolean update()
 	{
 		if(numProduction > 0)
 		{
@@ -33,31 +35,38 @@ public class Artisan extends GridElement
 			if(productionProgress == production.getFirst().productionCost)
 			{
 				productionProgress = 0;
-				return production.remove();
+				producedItem = production.remove();
+				return true;
 			}
 		}
-		// else
-		return null;
+		//else
+		return false;
 	}
 
 	/**
 	 * Add an item to this artisan.
-	 * 
-	 * @param item
-	 *            is the Item object to add to the production queue.
-	 * @return the success state of adding the item. May return true if
-	 *         incompatible item, or if queue is full.
+	 * @param item is the Item object to add to the production queue.
+	 * @return the success state of adding the item. May return false if incompatible item, or if queue is full.
 	 */
 	boolean addProduction(Item item)
 	{
-		if(item.elementType == this.elementType && numProduction < ShoppeConstants.productionLimit)
-		{
+		if (numProduction < ShoppeConstants.productionLimit)
+		{ //&&item.elementType == this.elementType
 			numProduction++;
 			return production.add(item);
 		}
 		return false;
 	}
-
+	/**
+	 * Removes an item from this artisan's production queue.
+	 * @param item is the Item object to remove from the production queue.
+	 * @return the success state of removing the item. May return false if the item is not found.
+	 */
+	boolean removeProduction(Item item) 
+	{
+		return production.remove(item);
+	}
+	
 	/**
 	 * Increases the skill level of this artisan given a subtype.
 	 * 

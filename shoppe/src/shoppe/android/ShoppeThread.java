@@ -96,12 +96,18 @@ public class ShoppeThread extends Thread
 	private SurfaceHolder surfaceHolder = null;
 
 	/** Used to keep track of update cycles **/
-	private long beginTime;
+	private long patronBeginTime;
+	
+	/** Used to keep track of update cycles **/
+	private long artisanBeginTime;
 
 	private boolean[][] tileOccupied = new boolean[gridHeight][gridWidth];
 
 	/** The amount of time in seconds that patron positions are updated **/
 	private static final int patronUpdateInterval = 2;
+	
+	/** The amount of time in seconds that artisans are updated **/
+	private static final int artisanUpdateInterval = 10;
 
 	/** Global list of possible items **/
 	private LinkedList<Item> itemList = new LinkedList<Item>();
@@ -129,6 +135,18 @@ public class ShoppeThread extends Thread
 	/** The patron currently engaged by the user **/
 	private Patron interactingPatron;
 	
+	/** The item the patron is interested in **/
+	private Item patronsItem;
+
+	/** Number of artisans ever hired. Used for assigning ids **/
+	private static int artisanCount;
+	
+	/** Maximum number of artisans employed at any time **/
+	private static int maxArtisans = 4;
+	
+	/** Maximum number of patrons in the shop at any time **/
+	private static int maxPatrons = 10;
+	
 	/** Current inventory */
 	private ImageAdapter inventoryAdapter;
 	
@@ -152,7 +170,7 @@ public class ShoppeThread extends Thread
 
 	public void init()
 	{
-		beginTime = System.currentTimeMillis();
+		patronBeginTime = System.currentTimeMillis();
 		// initialize occupied tiles on grid
 		for(int i = 0; i < gridHeight; i++)
 		{
@@ -191,6 +209,9 @@ public class ShoppeThread extends Thread
 		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.kite, 55, 5, 2, "Mangled Kite Armor"));
 		itemList.add(new Item(-1, -1, ShoppeConstants.potion, ShoppeConstants.poison, 100, 6, 5, "PBDE"));
 		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.blah, 102, 4, 5, "Chipped Blah"));
+		
+		//get an employee
+		artisanList.add(new Artisan(artisanCount++));
 
 	}
 
@@ -227,6 +248,70 @@ public class ShoppeThread extends Thread
 			textPaint.setTextSize(tileHeight / 4);
 		}
 	}
+	
+	private void artisanUpdate() {
+		Iterator<Artisan> iterator = artisanList.iterator();
+		Artisan artisan;
+		Item item;
+		if (System.currentTimeMillis() > artisanBeginTime + artisanUpdateInterval * 1000) {
+			while (iterator.hasNext()) {
+				artisan = iterator.next();
+				if (artisan.update() == true) {
+					item = artisan.producedItem;
+					inventoryList.add(item);
+				}
+			}
+			artisanBeginTime = System.currentTimeMillis();
+		}
+	}
+	
+	public boolean addProduction(int id, Item item) {
+		Artisan artisan;
+		Iterator<Artisan> iterator = artisanList.iterator();
+		while (iterator.hasNext()) {
+			artisan = iterator.next();
+			if (id == artisan.id) {
+				return artisan.addProduction(item);
+			}
+		}
+		//if artisan not found
+		return false;
+	}
+	
+	public boolean removeProduction(int id, Item item) {
+		Artisan artisan;
+		Iterator<Artisan> iterator = artisanList.iterator();
+		while (iterator.hasNext()) {
+			artisan = iterator.next();
+			if (id == artisan.id) {
+				return artisan.removeProduction(item);
+			}
+		}
+		//if artisan not found
+		return false;
+	}
+	
+	public boolean hireArtisan() {
+		if (artisanList.size() < maxArtisans) {
+			return artisanList.add(new Artisan(artisanCount++));
+		}
+		//else
+		return false;
+	}
+	
+	public boolean fireArtisan(int id) {
+		Artisan artisan;
+		Iterator<Artisan> iterator = artisanList.iterator();
+		while (iterator.hasNext()) {
+			artisan = iterator.next();
+			if (id == artisan.id) {
+				iterator.remove();
+				return true;
+			}
+		}
+		//if artisan not found
+		return false;
+	}
 
 	private void patronUpdate()
 	{
@@ -234,7 +319,7 @@ public class ShoppeThread extends Thread
 		Patron patron;
 		boolean[] availableDirections = new boolean[4];
 		int xpos, ypos;
-		if(System.currentTimeMillis() > beginTime + patronUpdateInterval * 1000)
+		if(System.currentTimeMillis() > patronBeginTime + patronUpdateInterval * 1000)
 		{
 			while(iterator.hasNext())
 			{
@@ -288,7 +373,7 @@ public class ShoppeThread extends Thread
 				}
 				// else do nothing
 			}
-			beginTime = System.currentTimeMillis();
+			patronBeginTime = System.currentTimeMillis();
 		}
 	}
 
@@ -312,6 +397,7 @@ public class ShoppeThread extends Thread
 			if(mRun)
 			{
 				patronUpdate();
+				artisanUpdate();
 				Canvas canvas = null;
 				try
 				{
@@ -465,6 +551,13 @@ public class ShoppeThread extends Thread
 									selectedY = tileY;
 									// start interaction
 									interactingPatron = patron;
+									//grab a psuedo-random item from the itemList
+									//potentially not in store inventory
+									int itemIndex = itemList.size() % (int)(10*Math.random());
+									//Log.v("item generation", "itemIndex :" + itemIndex + " listSize: " + itemList.size());
+									
+									patronsItem = itemList.get(itemIndex);
+									Log.v("patronUpdate", "Added item " + itemList.get(itemIndex).name + " at index " + itemIndex);
 									if(patron.startInteraction())
 									{
 										interactingPatron = patron;
