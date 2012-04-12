@@ -138,6 +138,12 @@ public class ShoppeThread extends Thread
 	/** Number of artisans ever hired. Used for assigning ids **/
 	private static int artisanCount;
 	
+	/** Maximum number of artisans employed at any time **/
+	private static int maxArtisans = 4;
+	
+	/** Maximum number of patrons in the shop at any time **/
+	private static int maxPatrons = 10;
+	
 	/** Current inventory */
 	ImageAdapter inventoryAdapter;
 
@@ -272,6 +278,28 @@ public class ShoppeThread extends Thread
 			artisan = iterator.next();
 			if (id == artisan.id) {
 				return artisan.removeProduction(item);
+			}
+		}
+		//if artisan not found
+		return false;
+	}
+	
+	public boolean hireArtisan() {
+		if (artisanList.size() < maxArtisans) {
+			return artisanList.add(new Artisan(artisanCount++));
+		}
+		//else
+		return false;
+	}
+	
+	public boolean fireArtisan(int id) {
+		Artisan artisan;
+		Iterator<Artisan> iterator = artisanList.iterator();
+		while (iterator.hasNext()) {
+			artisan = iterator.next();
+			if (id == artisan.id) {
+				iterator.remove();
+				return true;
 			}
 		}
 		//if artisan not found
