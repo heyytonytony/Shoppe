@@ -8,12 +8,17 @@ public class Artisan extends GridElement {
 	LinkedList<Item> production = new LinkedList<Item>();
 	int numProduction = 0;
 	int productionProgress = 0;
+	Item producedItem;
+	int id;
+	static int artisanCount;
 	
 	public Artisan() {
+		id = artisanCount++;
 	}
 
 	public Artisan(int xpos, int ypos, int elementType) {
 		super(xpos, ypos, elementType);
+		id = artisanCount++;
 		skills = new int[ShoppeConstants.getSubtypes(elementType)];
 	}
 	
@@ -21,29 +26,38 @@ public class Artisan extends GridElement {
 	 * Updates this artisan's progress on an item for every call.
 	 * @return an Item object if production has finished, Null otherwise.
 	 */
-	public Item update() {
+	public boolean update() {
 		if (numProduction > 0) {
 			productionProgress++;
 			if (productionProgress == production.getFirst().productionCost) {
 				productionProgress = 0;
-				return production.remove();
+				producedItem = production.remove();
+				return true;
 			}
 		}
 		//else
-		return null;
+		return false;
 	}
 	
 	/**
 	 * Add an item to this artisan.
 	 * @param item is the Item object to add to the production queue.
-	 * @return the success state of adding the item. May return true if incompatible item, or if queue is full.
+	 * @return the success state of adding the item. May return false if incompatible item, or if queue is full.
 	 */
 	boolean addProduction(Item item) {
-		if (item.elementType == this.elementType && numProduction < ShoppeConstants.productionLimit) {
+		if (numProduction < ShoppeConstants.productionLimit) { //&&item.elementType == this.elementType
 			numProduction++;
 			return production.add(item);
 		}
 		return false;
+	}
+	/**
+	 * Removes an item from this artisan's production queue.
+	 * @param item is the Item object to remove from the production queue.
+	 * @return the success state of removing the item. May return false if the item is not found.
+	 */
+	boolean removeProduction(Item item) {
+		return production.remove(item);
 	}
 	
 	/**

@@ -10,6 +10,10 @@ public class Patron extends GridElement
 	boolean exclamation = false;
 	/** The probability that a patron will move from their current tile **/
 	double movementProbability = 0.5;
+	/** Probability describing how likely a patron is to become interested in an item **/
+	double buyProbability = 0.1;
+	/** Probability that the patron will exit the shop **/
+	double exitProbability = 0.2;
 	/** Describes if the patron is currently interacting with the user **/
 	boolean interacting = false;
 
@@ -87,6 +91,20 @@ public class Patron extends GridElement
 		//else
 		return -1;
 	}
+	
+	public boolean interestedBuying() {
+
+		//check for probability hit and if the patron wasn't previously interested
+		if (!exclamation && Math.random() < buyProbability) {
+			exclamation = !exclamation;
+		}
+		if (exclamation) {
+			return true;
+		}
+		//else
+		return false;
+	}
+	
 	/**
 	 * invoked when a patron is selected by the user
 	 * @return determines if the patron is interested in interacting with the user eg. if the patron wants to barter
