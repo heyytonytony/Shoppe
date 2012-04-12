@@ -10,15 +10,14 @@ public class Artisan extends GridElement {
 	int productionProgress = 0;
 	Item producedItem;
 	int id;
-	static int artisanCount;
 	
-	public Artisan() {
-		id = artisanCount++;
+	public Artisan(int id) {
+		this.id = id;
 	}
 
-	public Artisan(int xpos, int ypos, int elementType) {
+	public Artisan(int id, int xpos, int ypos, int elementType) {
 		super(xpos, ypos, elementType);
-		id = artisanCount++;
+		this.id = id;
 		skills = new int[ShoppeConstants.getSubtypes(elementType)];
 	}
 	

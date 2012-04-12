@@ -134,6 +134,9 @@ public class ShoppeThread extends Thread
 	
 	/** The item the patron is interested in **/
 	private Item patronsItem;
+
+	/** Number of artisans ever hired. Used for assigning ids **/
+	private static int artisanCount;
 	
 	/** Current inventory */
 	ImageAdapter inventoryAdapter;
@@ -195,7 +198,7 @@ public class ShoppeThread extends Thread
 		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.blah, 102, 4, 5, "Chipped Blah"));
 		
 		//get an employee
-		artisanList.add(new Artisan());
+		artisanList.add(new Artisan(artisanCount++));
 
 	}
 
