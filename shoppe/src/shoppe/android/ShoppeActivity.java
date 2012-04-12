@@ -36,13 +36,33 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ImageView inv;
 	private Dialog dia = null;
 	private ImageAdapter inventoryAdapter;
-	private boolean[] employedArtisans;
+	private int[] artisanButtons;
 	
-	private final Handler handler = new Handler()
+	final Handler handler = new Handler()
 	{
 		public void handleMessage(Message msg)
 		{
-			
+			Button artisanButton;
+			switch(msg.what)
+			{
+			case ShoppeConstants.HIRE_ARTISAN:
+				artisanButton = (Button)findViewById(artisanButtons[msg.arg1]);
+				artisanButton.setVisibility(View.VISIBLE);
+				viewFlipper.showNext();
+				viewFlipper.showPrevious();
+				Log.d("hired artisan button", artisanButtons[msg.arg1] + "     " + R.id.artisan0Button);
+				return;
+				
+			case ShoppeConstants.FIRE_ARTISAN:
+				artisanButton = (Button)findViewById(artisanButtons[msg.arg1]);
+				artisanButton.setVisibility(View.INVISIBLE);
+				viewFlipper.showNext();
+				viewFlipper.showPrevious();
+				
+			default:
+				return;
+			}
+				
 		}
 	};
 
@@ -57,6 +77,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
 		shoppeView = (ShoppeView)findViewById(R.id.shoppeView);
+		shoppeView.setHandler(handler);
 		shoppeThread = shoppeView.getThread();
 		
 		viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper);
@@ -73,8 +94,10 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	            Toast.makeText(shoppeView.getContext(), "" + position, Toast.LENGTH_SHORT).show();
 	        }
 	    });
+
+	    int[] temp = {R.id.artisan0Button, R.id.artisan1Button, R.id.artisan2Button, R.id.artisan3Button};
+	    artisanButtons = temp;
 	    
-	    employedArtisans = shoppeThread.getEmployed();
 
 	}
 

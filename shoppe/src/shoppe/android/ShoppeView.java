@@ -25,7 +25,7 @@ public class ShoppeView extends SurfaceView implements Callback
 		surfaceHolder.setSizeFromLayout();
 
 		// pre-create thread
-		thread = new ShoppeThread(surfaceHolder, getContext(), handler);
+		thread = new ShoppeThread(surfaceHolder, getContext(), getHandler());
 
 		setFocusable(true);
 	}
@@ -94,6 +94,7 @@ public class ShoppeView extends SurfaceView implements Callback
 	public void setHandler(Handler handler)
 	{
 		this.handler = handler;
+		thread.setHandler(handler);
 	}
 
 }

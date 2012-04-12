@@ -2,10 +2,10 @@ package shoppe.android;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -211,7 +211,7 @@ public class ShoppeThread extends Thread
 		itemList.add(new Item(-1, -1, ShoppeConstants.armor, ShoppeConstants.blah, 102, 4, 5, "Chipped Blah"));
 		
 		//get an employee
-		artisanList.add(new Artisan(artisanCount++));
+		//artisanList.add(new Artisan(artisanCount++));
 
 	}
 
@@ -293,6 +293,12 @@ public class ShoppeThread extends Thread
 	
 	public boolean hireArtisan() {
 		if (artisanList.size() < maxArtisans) {
+			employedArtisan[artisanCount] = true;
+			Message msg = handler.obtainMessage();
+			msg.arg1 = artisanCount;
+			msg.what = ShoppeConstants.HIRE_ARTISAN;
+			handler.sendMessage(msg);
+			Log.d("hiring process", "" + msg.arg1 + "   " + artisanCount);
 			return artisanList.add(new Artisan(artisanCount++));
 		}
 		//else
@@ -306,6 +312,11 @@ public class ShoppeThread extends Thread
 			artisan = iterator.next();
 			if (id == artisan.id) {
 				iterator.remove();
+				employedArtisan[--artisanCount] = false;
+				Message msg = handler.obtainMessage();
+				msg.arg1 = artisanCount;
+				msg.what = ShoppeConstants.FIRE_ARTISAN;
+				handler.sendMessage(msg);
 				return true;
 			}
 		}
@@ -553,8 +564,8 @@ public class ShoppeThread extends Thread
 									interactingPatron = patron;
 									//grab a psuedo-random item from the itemList
 									//potentially not in store inventory
-									int itemIndex = itemList.size() % (int)(10*Math.random());
-									//Log.v("item generation", "itemIndex :" + itemIndex + " listSize: " + itemList.size());
+									int itemIndex = (itemList.size() - 1) % (int)(10*Math.random());
+									Log.v("item generation", "itemIndex :" + itemIndex + " listSize: " + itemList.size());
 									
 									patronsItem = itemList.get(itemIndex);
 									Log.v("patronUpdate", "Added item " + itemList.get(itemIndex).name + " at index " + itemIndex);
@@ -562,6 +573,7 @@ public class ShoppeThread extends Thread
 									{
 										interactingPatron = patron;
 									}
+									if(hireArtisan()) Log.d("HIRING", "HIRING WORKS YO");
 									break;
 								}
 							}
@@ -586,5 +598,10 @@ public class ShoppeThread extends Thread
 	public boolean[] getEmployed()
 	{
 		return employedArtisan;
+	}
+	
+	public void setHandler(Handler handler)
+	{
+		this.handler = handler;
 	}
 }

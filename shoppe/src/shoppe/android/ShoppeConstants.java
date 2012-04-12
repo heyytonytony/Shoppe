@@ -45,6 +45,10 @@ public final class ShoppeConstants {
 	public static final int left = 2;
 	public static final int right = 3;
 	
+	//message types
+	public static final int HIRE_ARTISAN = 100;
+	public static final int FIRE_ARTISAN = 101;
+	
 	public static int getSubtypes(int elementType) {
 		return numSubtypes[elementType];
 	}
