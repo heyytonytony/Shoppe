@@ -5,29 +5,66 @@
     android:layout_width="wrap_content"
     android:layout_height="fill_parent">
     
-    <Button
-        android:id="@+id/artCreateItem"
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:id="@+id/artisanTable"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:text="Create Item">
-    </Button>
-    
-    <Button
-        android:id="@+id/artCancelItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Cancel Item">
-    </Button>
-    
-    <Button
-        android:id="@+id/artDone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="Done">
-    </Button>
-    
+        android:stretchColumns="*" >
+		
+        <TableRow
+            android:id="@+id/artisanButtonRow"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	        
+	        <ImageView
+	            android:id="@+id/queue0"
+	            android:padding="5dp" />"
+	        <ImageView
+	            android:id="@+id/queue1"
+	            android:padding="5dp" />
+	        <ImageView
+	            android:id="@+id/queue2"
+	            android:padding="5dp" />
+	        <ImageView
+	            android:id="@+id/queue3"
+	            android:padding="5dp" />
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/artisanButtonRow"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	        
+		    <Button
+		        android:id="@+id/artCreateItem"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="Create Item">
+		    </Button>
+		    
+		    <Button
+		        android:id="@+id/artCancelItem"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_toRightOf="@id/artCreateItem"
+		        android:text="Cancel Item">
+		    </Button>
+		    
+		    <Button
+		        android:id="@+id/artFire"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_toLeftOf="@id/artDone"
+		        android:text="Fire Artisan">
+		    </Button>
+		    
+		    <Button
+		        android:id="@+id/artDone"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="Done">
+		    </Button>
+	    </TableRow>
+    </TableLayout>
     
 </RelativeLayout>

@@ -300,7 +300,7 @@ public class ShoppeThread extends Thread
 			msg.arg1 = artisanCount;
 			msg.what = ShoppeConstants.HIRE_ARTISAN;
 			handler.sendMessage(msg);
-			Log.d("hiring process", "" + msg.arg1 + "   " + artisanCount);
+			Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
 			return artisanList.add(new Artisan(artisanCount++));
 		}
 		//else
@@ -319,6 +319,7 @@ public class ShoppeThread extends Thread
 				msg.arg1 = artisanCount;
 				msg.what = ShoppeConstants.FIRE_ARTISAN;
 				handler.sendMessage(msg);
+				Log.d("fired an artisan", "" + msg.arg1 + "   " + artisanCount);
 				return true;
 			}
 		}

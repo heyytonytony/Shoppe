@@ -213,7 +213,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	protected Dialog onCreateDialog(int id)
 	{
 		final Context mContext = shoppeView.getContext();
-		Button artCreateItem, artCancelItem, artDone;
+		Button artCreateItem, artCancelItem, artFire, artDone;
 		switch(id)
 		{
 			case DIALOG_PAUSE:
@@ -292,6 +292,38 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
+				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//fire the bloke
+						diaNest = null;
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setMessage("Are you sure you want to fire Artisan 1?");
+						builder.setCancelable(false);
+						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+						 	public void onClick(DialogInterface dialog, int id)
+						 	{
+						 		shoppeThread.fireArtisan(0);
+							}
+						});
+					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+					    {
+					    	public void onClick(DialogInterface dialog, int id)
+					    	{
+					    		dialog.cancel();
+					    	}
+					    });
+					    AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
+						
+					}
+				});
+				
 				artDone = (Button)dia.findViewById(R.id.artDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
@@ -367,6 +399,38 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
+				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//fire the bloke
+						diaNest = null;
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setMessage("Are you sure you want to fire Artisan 2?");
+						builder.setCancelable(false);
+						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+						 	public void onClick(DialogInterface dialog, int id)
+						 	{
+						 		shoppeThread.fireArtisan(1);
+							}
+						});
+					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+					    {
+					    	public void onClick(DialogInterface dialog, int id)
+					    	{
+					    		dialog.cancel();
+					    	}
+					    });
+					    AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
+						
+					}
+				});
+				
 				artDone = (Button)dia.findViewById(R.id.artDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
@@ -439,6 +503,70 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						AlertDialog alert = builder.create();
 						diaNest = alert;
 						diaNest.show();
+					}
+				});
+				
+				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//fire the bloke
+						diaNest = null;
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setMessage("Are you sure you want to fire Artisan 3?");
+						builder.setCancelable(false);
+						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+						 	public void onClick(DialogInterface dialog, int id)
+						 	{
+						 		shoppeThread.fireArtisan(2);
+							}
+						});
+					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+					    {
+					    	public void onClick(DialogInterface dialog, int id)
+					    	{
+					    		dialog.cancel();
+					    	}
+					    });
+					    AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
+						
+					}
+				});
+				
+				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//fire the bloke
+						diaNest = null;
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setMessage("Are you sure you want to fire Artisan 4?");
+						builder.setCancelable(false);
+						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+						 	public void onClick(DialogInterface dialog, int id)
+						 	{
+						 		shoppeThread.fireArtisan(3);
+							}
+						});
+					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+					    {
+					    	public void onClick(DialogInterface dialog, int id)
+					    	{
+					    		dialog.cancel();
+					    	}
+					    });
+					    AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
+						
 					}
 				});
 				
