@@ -285,6 +285,7 @@ public class ShoppeThread extends Thread
 		while (iterator.hasNext()) {
 			artisan = iterator.next();
 			if (id == artisan.id) {
+				Log.d("remove item from production queue", "artisan" + id + " scrapping item " + item.getItemName());
 				return artisan.removeProduction(item);
 			}
 		}
@@ -570,7 +571,7 @@ public class ShoppeThread extends Thread
 									
 									patronsItem = itemList.get(itemIndex);
 									Log.v("patronUpdate", "Added item " + itemList.get(itemIndex).name + " at index " + itemIndex);
-//									hireArtisan();//debuggery
+									hireArtisan();//debuggery
 									if(patron.startInteraction())
 									{
 										interactingPatron = patron;
@@ -619,5 +620,15 @@ public class ShoppeThread extends Thread
 			itemCS[i] = itemList.get(i).getItemName();
 		}
 		return itemCS;
+	}
+	
+	public LinkedList<Item> getArtisanProductionQueue(int artisanID)
+	{
+		return artisanList.get(artisanID).getProductionQueue();
+	}
+	
+	public CharSequence[] getArtisantPQCS(int artisanID)
+	{
+		return artisanList.get(artisanID).getPQCS();
 	}
 }

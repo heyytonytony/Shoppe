@@ -64,6 +64,7 @@ public class Artisan extends GridElement
 	 */
 	boolean removeProduction(Item item) 
 	{
+		numProduction--;
 		return production.remove(item);
 	}
 	
@@ -83,6 +84,21 @@ public class Artisan extends GridElement
 		}
 		// else
 		return false;
+	}
+	
+	public LinkedList<Item> getProductionQueue()
+	{
+		return production;
+	}
+
+	public CharSequence[] getPQCS()
+	{
+		CharSequence[] PQCS = new CharSequence[production.size()];
+		for(int i = 0; i < production.size(); i++)
+		{
+			PQCS[i] = production.get(i).getItemName();
+		}
+		return PQCS;
 	}
 
 }

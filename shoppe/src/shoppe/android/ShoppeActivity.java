@@ -38,9 +38,16 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ImageView inv;
 	private Dialog dia = null, diaNest = null;
 	private ImageAdapter inventoryAdapter;
+	
+	private int[] artisanButtons;
+	
+	/** Managing add items to production queue */
 	private LinkedList<Item> itemList;
 	private CharSequence[] itemCS;
-	private int[] artisanButtons;
+	
+	/** Managing removing items from production queue */
+	private LinkedList<Item> artisanProductionQueue;
+	private CharSequence[] artisanPQCS;
 	
 	/** dialog IDs */
 	private static final int DIALOG_PAUSE = 0;
@@ -238,6 +245,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
+						diaNest = null;
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 1 Create Item");
 						builder.setItems(itemCS, new DialogInterface.OnClickListener()
@@ -245,7 +253,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    public void onClick(DialogInterface dialog, int index)
 						    {
 						        shoppeThread.addProduction(0, itemList.get(index));
-						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        diaNest.dismiss();
 
 						    }
@@ -263,6 +271,24 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//cancel item stuff
+						diaNest = null;
+						artisanPQCS = shoppeThread.getArtisantPQCS(0);
+						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 1 Cancel Item");
+						builder.setItems(artisanPQCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.removeProduction(0, artisanProductionQueue.get(index));
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -294,6 +320,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
+						diaNest = null;
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 2 Create Item");
 						builder.setItems(itemCS, new DialogInterface.OnClickListener()
@@ -301,7 +328,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    public void onClick(DialogInterface dialog, int index)
 						    {
 						        shoppeThread.addProduction(1, itemList.get(index));
-						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        diaNest.dismiss();
 
 						    }
@@ -319,6 +346,24 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//cancel item stuff
+						diaNest = null;
+						artisanPQCS = shoppeThread.getArtisantPQCS(1);
+						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 2 Cancel Item");
+						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.removeProduction(1, artisanProductionQueue.get(index));
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -350,6 +395,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
+						diaNest = null;
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 3 Create Item");
 						builder.setItems(itemCS, new DialogInterface.OnClickListener()
@@ -357,7 +403,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    public void onClick(DialogInterface dialog, int index)
 						    {
 						        shoppeThread.addProduction(2, itemList.get(index));
-						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        diaNest.dismiss();
 
 						    }
@@ -375,6 +421,24 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//cancel item stuff
+						diaNest = null;
+						artisanPQCS = shoppeThread.getArtisantPQCS(2);
+						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 3 Cancel Item");
+						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.removeProduction(2, artisanProductionQueue.get(index));
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
@@ -406,6 +470,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//create item stuff
+						diaNest = null;
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 4 Create Item");
 						builder.setItems(itemCS, new DialogInterface.OnClickListener()
@@ -413,7 +478,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    public void onClick(DialogInterface dialog, int index)
 						    {
 						        shoppeThread.addProduction(3, itemList.get(index));
-						        Toast.makeText(mContext, itemList.get(index).getItemName(), Toast.LENGTH_SHORT).show();
+						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        diaNest.dismiss();
 
 						    }
@@ -431,6 +496,24 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//cancel item stuff
+						diaNest = null;
+						artisanPQCS = shoppeThread.getArtisantPQCS(3);
+						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setTitle("Artisan 4 Cancel Item");
+						builder.setItems(artisanPQCS, new DialogInterface.OnClickListener()
+						{
+						    public void onClick(DialogInterface dialog, int index)
+						    {
+						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.removeProduction(3, artisanProductionQueue.get(index));
+						        diaNest.dismiss();
+
+						    }
+						});
+						AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
 					}
 				});
 				
