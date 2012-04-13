@@ -293,15 +293,25 @@ public class ShoppeThread extends Thread
 		return false;
 	}
 	
-	public boolean hireArtisan() {
-		if (artisanList.size() < maxArtisans) {
-			employedArtisan[artisanCount] = true;
-			Message msg = handler.obtainMessage();
-			msg.arg1 = artisanCount;
-			msg.what = ShoppeConstants.HIRE_ARTISAN;
-			handler.sendMessage(msg);
-			Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
-			return artisanList.add(new Artisan(artisanCount++));
+	public boolean hireArtisan()
+	{
+		if (artisanList.size() < maxArtisans)
+		{
+		    int iArt;
+		    for(iArt = 0; iArt < maxArtisans; iArt++)
+		    {
+		        if(!employedArtisan[iArt])
+		        {
+		            artisanCount++;
+		            employedArtisan[iArt] = true;
+		            Message msg = handler.obtainMessage();
+		            msg.arg1 = iArt;
+		            msg.what = ShoppeConstants.HIRE_ARTISAN;
+		            handler.sendMessage(msg);
+		            Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
+		            return artisanList.add(new Artisan(iArt));
+		        }   
+		    }
 		}
 		//else
 		return false;
@@ -313,10 +323,11 @@ public class ShoppeThread extends Thread
 		while (iterator.hasNext()) {
 			artisan = iterator.next();
 			if (id == artisan.id) {
+			    artisanCount--;
 				iterator.remove();
-				employedArtisan[--artisanCount] = false;
+				employedArtisan[id] = false;
 				Message msg = handler.obtainMessage();
-				msg.arg1 = artisanCount;
+				msg.arg1 = id;
 				msg.what = ShoppeConstants.FIRE_ARTISAN;
 				handler.sendMessage(msg);
 				Log.d("fired an artisan", "" + msg.arg1 + "   " + artisanCount);
