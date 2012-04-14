@@ -131,6 +131,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		{
 			//showing paused dialog
 			showDialog(DIALOG_PAUSE);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 	}
@@ -142,24 +143,28 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		{
 			Log.d("Activity", "Artisan 1 pressed");
 			showDialog(DIALOG_ARTISAN_1);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan1Button)
 		{
 			Log.d("Activity", "Artisan 2 pressed");
 			showDialog(DIALOG_ARTISAN_2);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan2Button)
 		{
 			Log.d("Activity", "Artisan 3 pressed");
 			showDialog(DIALOG_ARTISAN_3);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan3Button)
 		{
 			Log.d("Activity", "Artisan 4 pressed");
 			showDialog(DIALOG_ARTISAN_4);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 	}
@@ -669,9 +674,13 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				break;
 		}
 		
-//		Log.d("dialog info", dia.)
 		return dia;
 
+	}
+	
+	protected void onPrepareDialog(int id, Dialog dialog)
+	{
+		dia = dialog;
 	}
 	
 	/**
