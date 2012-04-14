@@ -214,6 +214,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	{
 		final Context mContext = shoppeView.getContext();
 		Button artCreateItem, artCancelItem, artFire, artDone;
+		
 		switch(id)
 		{
 			case DIALOG_PAUSE:
@@ -308,6 +309,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						 	public void onClick(DialogInterface dialog, int id)
 						 	{
 						 		shoppeThread.fireArtisan(0);
+						 		dialog.dismiss();
 							}
 						});
 					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -331,8 +333,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan1 done", "ARTISAN 1 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
@@ -383,7 +386,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 2 Cancel Item");
-						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						builder.setItems(artisanPQCS, new DialogInterface.OnClickListener()
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
@@ -415,6 +418,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						 	public void onClick(DialogInterface dialog, int id)
 						 	{
 						 		shoppeThread.fireArtisan(1);
+						 		dialog.dismiss();
 							}
 						});
 					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -438,8 +442,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan2 done", "ARTISAN 2 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
@@ -490,7 +495,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 3 Cancel Item");
-						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						builder.setItems(artisanPQCS, new DialogInterface.OnClickListener()
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
@@ -522,38 +527,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						 	public void onClick(DialogInterface dialog, int id)
 						 	{
 						 		shoppeThread.fireArtisan(2);
-							}
-						});
-					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
-					    {
-					    	public void onClick(DialogInterface dialog, int id)
-					    	{
-					    		dialog.cancel();
-					    	}
-					    });
-					    AlertDialog alert = builder.create();
-						diaNest = alert;
-						diaNest.show();
-						
-					}
-				});
-				
-				artFire = (Button)dia.findViewById(R.id.artFire);
-				artFire.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View v)
-					{
-						//fire the bloke
-						diaNest = null;
-						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-						builder.setMessage("Are you sure you want to fire Artisan 4?");
-						builder.setCancelable(false);
-						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-						{
-						 	public void onClick(DialogInterface dialog, int id)
-						 	{
-						 		shoppeThread.fireArtisan(3);
+						 		dialog.dismiss();
 							}
 						});
 					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -577,8 +551,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan3 done", "ARTISAN 3 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
@@ -645,6 +620,39 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
+				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//fire the bloke
+						diaNest = null;
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setMessage("Are you sure you want to fire Artisan 4?");
+						builder.setCancelable(false);
+						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+						 	public void onClick(DialogInterface dialog, int id)
+						 	{
+						 		shoppeThread.fireArtisan(3);
+						 		dialog.dismiss();
+							}
+						});
+					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+					    {
+					    	public void onClick(DialogInterface dialog, int id)
+					    	{
+					    		dialog.cancel();
+					    	}
+					    });
+					    AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
+						
+					}
+				});
+				
 				artDone = (Button)dia.findViewById(R.id.artDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
@@ -652,15 +660,35 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan4 done", "ARTISAN 4 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
 				break;
 		}
-
+		
+//		Log.d("dialog info", dia.)
 		return dia;
 
 	}
+	
+	/**
+     * Invoked when the Activity loses user focus.
+     */
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        finish();
+        System.gc();
+    }
+    
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.gc();
+    }
 }
