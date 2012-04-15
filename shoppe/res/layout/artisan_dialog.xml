@@ -6,7 +6,7 @@
     android:layout_height="fill_parent">
     
     <TableLayout
-        android:id="@+id/artisanProductionTable"
+        android:id="@+id/artisanProductionImageTable"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="*" >
@@ -32,10 +32,42 @@
     </TableLayout>
     
     <TableLayout
+        android:id="@+id/artisanProductionTextTable"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_alignBottom="@id/artisanProductionImageTable" >
+        
+        <TableRow
+            android:id="@+id/artisanProductionRowText"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	        
+	        <TextView
+	            android:id="@+id/qText0"
+	            android:padding="2dp"
+	            android:gravity="center_horizontal" />
+	        <TextView
+	            android:id="@+id/qText1"
+	            android:padding="2dp"
+	            android:gravity="center_horizontal" />
+	        <TextView
+	            android:id="@+id/qText2"
+	            android:padding="2dp"
+	            android:gravity="center_horizontal" />
+	        <TextView
+	            android:id="@+id/qText3"
+	            android:padding="2dp"
+	            android:gravity="center_horizontal" />
+        </TableRow>
+    </TableLayout>
+    
+    <TableLayout
         android:id="@+id/artisanButtonTable"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/artisanProductionTable"
+        android:layout_below="@id/artisanProductionImageTable"
+        android:paddingTop="10dp"
         android:stretchColumns="*" >
 	        
         <TableRow

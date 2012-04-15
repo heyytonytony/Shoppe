@@ -56,8 +56,6 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private static final int DIALOG_ARTISAN_2 = 2;
 	private static final int DIALOG_ARTISAN_3 = 3;
 	private static final int DIALOG_ARTISAN_4 = 4;
-	private static final int DIALOG_ADD_ITEM = 5;
-	private static final int DIALOG_REM_ITEM = 6;
 	
 	final Handler handler = new Handler()
 	{
@@ -263,6 +261,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.addProduction(0, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(0);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
 						        diaNest.dismiss();
 
@@ -292,6 +291,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(0, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(0);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
 						        diaNest.dismiss();
 
@@ -374,6 +374,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.addProduction(1, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(1);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						        diaNest.dismiss();
 
@@ -403,6 +404,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(1, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(1);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						        diaNest.dismiss();
 
@@ -485,6 +487,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.addProduction(2, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(2);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						        diaNest.dismiss();
 
@@ -514,6 +517,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(2, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(2);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						        diaNest.dismiss();
 
@@ -596,6 +600,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.addProduction(3, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(3);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
 						        diaNest.dismiss();
 
@@ -625,6 +630,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(3, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(3);
 								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
 						        diaNest.dismiss();
 
@@ -695,11 +701,15 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		{
 			int size = Math.min(4, artisanProductionQueue.size());
 			ImageView[] images = new ImageView[size];
-			TableRow prodQItems = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
+			TextView[] text = new TextView[size];
+			TableRow prodQItemsImages = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
+			TableRow prodQItemsTexts = (TableRow)dialog.findViewById(R.id.artisanProductionRowText);
 			for(int index = 0; index < size; index++)
 			{
-				images[index] = (ImageView)prodQItems.getChildAt(index);
+				images[index] = (ImageView)prodQItemsImages.getChildAt(index);
 				images[index].setImageResource(artisanProductionQueue.get(index).getDrawableID());
+				text[index] = (TextView)prodQItemsTexts.getChildAt(index);
+				text[index].setText(artisanPQCS[index]);
 			}
 		}
 		
