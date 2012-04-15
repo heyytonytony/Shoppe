@@ -6,60 +6,66 @@
     android:layout_height="fill_parent">
     
     <TableLayout
-        android:id="@+id/artisanTable"
+        android:id="@+id/artisanProductionTable"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="*" >
 		
         <TableRow
-            android:id="@+id/artisanButtonRow"
+            android:id="@+id/artisanProductionRow"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content">
 	        
 	        <ImageView
 	            android:id="@+id/queue0"
-	            android:padding="5dp" />"
+	            android:padding="2dp" />"
 	        <ImageView
 	            android:id="@+id/queue1"
-	            android:padding="5dp" />
+	            android:padding="2dp" />
 	        <ImageView
 	            android:id="@+id/queue2"
-	            android:padding="5dp" />
+	            android:padding="2dp" />
 	        <ImageView
 	            android:id="@+id/queue3"
-	            android:padding="5dp" />
+	            android:padding="2dp" />
         </TableRow>
-        
+    </TableLayout>
+    
+    <TableLayout
+        android:id="@+id/artisanButtonTable"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/artisanProductionTable"
+        android:stretchColumns="*" >
+	        
         <TableRow
             android:id="@+id/artisanButtonRow"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content">
 	        
 		    <Button
-		        android:id="@+id/artCreateItem"
+		        android:id="@+id/artisanCreateItem"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="Create Item">
 		    </Button>
 		    
 		    <Button
-		        android:id="@+id/artCancelItem"
+		        android:id="@+id/artisanCancelItem"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_toRightOf="@id/artCreateItem"
 		        android:text="Cancel Item">
 		    </Button>
 		    
 		    <Button
-		        android:id="@+id/artFire"
+		        android:id="@+id/artisanFire"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_toLeftOf="@id/artDone"
 		        android:text="Fire Artisan">
 		    </Button>
 		    
 		    <Button
-		        android:id="@+id/artDone"
+		        android:id="@+id/artisanDone"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:text="Done">

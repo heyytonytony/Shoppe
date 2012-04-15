@@ -107,13 +107,15 @@ public class Patron extends GridElement
 	
 	/**
 	 * invoked when a patron is selected by the user
-	 * @return determines if the patron is interested in interacting with the user eg. if the patron wants to barter
+	 * @return determines if the patron is interested in interacting with the user, i.e. if the patron wants to barter
 	 */
 	public boolean startInteraction() {
-		if (exclamation) {
+		if (exclamation)
+		{
 			//TODO: implement patron interaction/bartering
 			interacting = true;
 			exclamation = false;
+			return true;
 		}
 		return false;
 	}

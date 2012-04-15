@@ -24,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -244,7 +245,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 1 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				//populate ImageViews with items in production queue, if any
+				
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -258,8 +261,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(0, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(0, itemList.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
 						        diaNest.dismiss();
 
 						    }
@@ -270,7 +274,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -288,6 +292,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(0, artisanProductionQueue.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
 						        diaNest.dismiss();
 
 						    }
@@ -298,7 +303,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -331,7 +336,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -353,7 +358,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 2 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -367,8 +372,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(1, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(1, itemList.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						        diaNest.dismiss();
 
 						    }
@@ -379,7 +385,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -397,6 +403,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(1, artisanProductionQueue.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						        diaNest.dismiss();
 
 						    }
@@ -407,7 +414,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -440,7 +447,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -462,7 +469,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 3 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -476,8 +483,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(2, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(2, itemList.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						        diaNest.dismiss();
 
 						    }
@@ -488,7 +496,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -506,6 +514,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(2, artisanProductionQueue.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						        diaNest.dismiss();
 
 						    }
@@ -516,7 +525,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -549,7 +558,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -571,7 +580,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 4 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -585,8 +594,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(3, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(3, itemList.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
 						        diaNest.dismiss();
 
 						    }
@@ -597,7 +607,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -615,6 +625,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(3, artisanProductionQueue.get(index));
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
 						        diaNest.dismiss();
 
 						    }
@@ -625,7 +636,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -658,7 +669,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -680,6 +691,18 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	
 	protected void onPrepareDialog(int id, Dialog dialog)
 	{
+		if(id != DIALOG_PAUSE && artisanProductionQueue != null)
+		{
+			int size = Math.min(4, artisanProductionQueue.size());
+			ImageView[] images = new ImageView[size];
+			TableRow prodQItems = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
+			for(int index = 0; index < size; index++)
+			{
+				images[index] = (ImageView)prodQItems.getChildAt(index);
+				images[index].setImageResource(artisanProductionQueue.get(index).getDrawableID());
+			}
+		}
+		
 		dia = dialog;
 	}
 	
