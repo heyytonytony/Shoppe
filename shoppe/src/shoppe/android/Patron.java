@@ -13,9 +13,11 @@ public class Patron extends GridElement
 	/** Probability describing how likely a patron is to become interested in an item **/
 	double buyProbability = 0.1;
 	/** Probability that the patron will exit the shop **/
-	double exitProbability = 0.2;
+	double exitProbability = 0.05;
 	/** Describes if the patron is currently interacting with the user **/
 	boolean interacting = false;
+	/** Describes if the patron is interested in leaving the shop **/
+	boolean exiting = false;
 
 	public Patron()
 	{

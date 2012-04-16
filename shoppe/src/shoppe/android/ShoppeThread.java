@@ -2,6 +2,8 @@ package shoppe.android;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -138,7 +140,7 @@ public class ShoppeThread extends Thread
 	/** The item the patron is interested in **/
 	private Item patronsItem;
 
-	/** Number of artisans ever hired. Used for assigning ids **/
+	/** Number of artisans ever hired. Used for assigning ids (is this still true?) **/
 	private static int artisanCount;
 	
 	/** Maximum number of artisans employed at any time **/
@@ -146,6 +148,18 @@ public class ShoppeThread extends Thread
 	
 	/** Maximum number of patrons in the shop at any time **/
 	private static int maxPatrons = 10;
+	
+	/** Upper limit of patron wealth when randomly generating the value **/
+	private static final int maxPatronWealth = 5000;
+	
+	/** Probability for new patrons entering the shop **/
+	private static double patronEnterProbability = 0.05;
+	
+	/** Shop reputation determines how frequent new patrons enter **/
+	private int reputation = 0;
+	
+	/** Random number generator **/
+	private Random randomGenerator;
 	
 	/** Current inventory */
 	private ImageAdapter inventoryAdapter;
@@ -170,6 +184,7 @@ public class ShoppeThread extends Thread
 
 	public void init()
 	{
+		randomGenerator = new Random();
 		patronBeginTime = System.currentTimeMillis();
 		// initialize occupied tiles on grid
 		for(int i = 0; i < gridHeight; i++)
@@ -338,49 +353,46 @@ public class ShoppeThread extends Thread
 		return false;
 	}
 
-	private void patronUpdate()
-	{
+	private void patronUpdate() {
 		Iterator<Patron> iterator = patronList.iterator();
 		Patron patron;
 		boolean[] availableDirections = new boolean[4];
 		int xpos, ypos;
-		if(System.currentTimeMillis() > patronBeginTime + patronUpdateInterval * 1000)
-		{
-			while(iterator.hasNext())
-			{
-				for(int i = 0; i < 4; i++)
-				{
-					availableDirections[i] = false;
-				}
+		if (System.currentTimeMillis() > patronBeginTime + patronUpdateInterval * 1000) {
+			while (iterator.hasNext()) {
 				patron = iterator.next();
-				// only potentially move patrons that are not interacting with
-				// the user
-				if(patron.interacting == false)
-				{
-					xpos = patron.xpos;
-					ypos = patron.ypos;
-					if(ypos - 1 >= 0)
-					{
-						availableDirections[ShoppeConstants.up] = !tileOccupied[ypos - 1][xpos];
+				// figure out if we want to have this patron exit
+				if (Math.random() < patron.exitProbability) {
+					// exit this patron
+					tileOccupied[patron.ypos][patron.xpos] = false; 
+					iterator.remove();
+				}
+				else {
+					for (int i = 0; i < 4; i++) {
+						availableDirections[i] = false;
 					}
-					if(ypos + 1 < gridHeight)
-					{
-						availableDirections[ShoppeConstants.down] = !tileOccupied[ypos + 1][xpos];
-					}
-					if(xpos - 1 >= 0)
-					{
-						availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos - 1];
-					}
-					if(xpos + 1 < gridWidth)
-					{
-						availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos + 1];
-					}
-					int moveDirection = patron.move(availableDirections);
-					if(moveDirection > -1)
-					{ // update tileOccupied
-						tileOccupied[ypos][xpos] = false;
-						switch(moveDirection)
-						{
+					// only potentially move patrons that are not interacting
+					// with
+					// the user
+					if (patron.interacting == false) {
+						xpos = patron.xpos;
+						ypos = patron.ypos;
+						if (ypos - 1 >= 0) {
+							availableDirections[ShoppeConstants.up] = !tileOccupied[ypos - 1][xpos];
+						}
+						if (ypos + 1 < gridHeight) {
+							availableDirections[ShoppeConstants.down] = !tileOccupied[ypos + 1][xpos];
+						}
+						if (xpos - 1 >= 0) {
+							availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos - 1];
+						}
+						if (xpos + 1 < gridWidth) {
+							availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos + 1];
+						}
+						int moveDirection = patron.move(availableDirections);
+						if (moveDirection > -1) { // update tileOccupied
+							tileOccupied[ypos][xpos] = false;
+							switch (moveDirection) {
 							case ShoppeConstants.up:
 								tileOccupied[ypos - 1][xpos] = true;
 								break;
@@ -393,10 +405,33 @@ public class ShoppeThread extends Thread
 							case ShoppeConstants.right:
 								tileOccupied[ypos][xpos + 1] = true;
 								break;
+							}
 						}
 					}
 				}
 				// else do nothing
+			}
+
+			if (patronList.size() < maxPatrons && Math.random() < patronEnterProbability) { // determine if a new
+															// patron is to
+															// enter
+				// determine the initial position, assuming the entrance is at
+				// the bottom center of the screen
+				boolean openTile1, openTile2;
+				openTile1 = !tileOccupied[gridHeight - 1][gridWidth / 2];
+				openTile2 = !tileOccupied[gridHeight - 1][gridWidth / 2 - 1];
+				if (openTile1) {
+					patronList.add(new Patron(gridHeight - 1, gridWidth / 2, randomGenerator.nextInt(ShoppeConstants.numSubtypes.length),
+							randomGenerator.nextInt(maxPatronWealth)));
+					tileOccupied[gridHeight-1][gridWidth/2] = true;
+				} else if (openTile2) {
+					patronList.add(new Patron(gridHeight - 1, gridWidth / 2 - 1, randomGenerator.nextInt(ShoppeConstants.numSubtypes.length),
+							randomGenerator.nextInt(maxPatronWealth)));
+					tileOccupied[gridHeight-1][gridWidth/2-1] = true;
+
+				} else {
+					Log.v("Patron Update", "New patron can't enter shop");
+				}
 			}
 			patronBeginTime = System.currentTimeMillis();
 		}
@@ -578,7 +613,7 @@ public class ShoppeThread extends Thread
 									interactingPatron = patron;
 									//grab a psuedo-random item from the itemList
 									//potentially not in store inventory
-									int itemIndex = (itemList.size() - 1) % (int)(Math.round(10*Math.random()+0.5));
+									int itemIndex = randomGenerator.nextInt(itemList.size() - 1);
 									Log.v("item generation", "itemIndex :" + itemIndex + " listSize: " + itemList.size());
 									
 									patronsItem = itemList.get(itemIndex);
