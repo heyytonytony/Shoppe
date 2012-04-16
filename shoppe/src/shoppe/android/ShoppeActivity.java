@@ -87,6 +87,10 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				shoppeThread.setRunning(false);
 				return;
 				
+			case ShoppeConstants.ITEM_PRODUCED:
+				Toast.makeText(shoppeView.getContext(), ((Item)(msg.obj)).getItemName() + " completed by Artisan " + msg.arg1, Toast.LENGTH_SHORT).show();
+				return;
+				
 			default:
 				return;
 			}
@@ -724,8 +728,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					{
 						// TODO remove item from inventory, add funds
 						// perform sale
-						inventoryAdapter.removeItem(patronItem.getDrawableID());
-						shoppeThread.changeFunds(patronItem.getValue());
+						shoppeThread.sellItem(patronItem);
 						dia.dismiss();
 						shoppeThread.setRunning(true);
 						
@@ -762,8 +765,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					public void onClick(View v)
 					{
 						// buy item from patron
-						inventoryAdapter.addItem(patronItem.getDrawableID());
-						shoppeThread.changeFunds(-patronItem.getValue());
+						shoppeThread.buyItem(patronItem);
 						dia.dismiss();
 						shoppeThread.setRunning(true);
 					}

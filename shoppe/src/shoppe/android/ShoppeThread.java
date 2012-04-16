@@ -284,7 +284,11 @@ public class ShoppeThread extends Thread
 					item = artisan.producedItem;
 					inventoryList.add(item);
 					inventoryAdapter.addItem(item.getDrawableID());
-//					Toast.makeText(context, item.getItemName() + " completed by Artisan " + artisan.getID(), Toast.LENGTH_SHORT).show();
+					Message msg = handler.obtainMessage();
+					msg.arg1 = artisan.getID();
+					msg.what = ShoppeConstants.ITEM_PRODUCED;
+					msg.obj = item;
+					handler.sendMessage(msg);
 				}
 			}
 			artisanBeginTime = System.currentTimeMillis();
@@ -454,6 +458,20 @@ public class ShoppeThread extends Thread
 		{
 			funds -= item.value;
 			inventoryList.add(item);
+			inventoryAdapter.addItem(item.getDrawableID());
+			return true;
+		}
+		// else
+		return false;
+	}
+	
+	public boolean sellItem(Item item)
+	{
+		if(inventoryList.contains(item))
+		{
+			funds += item.value;
+			inventoryList.remove(item);
+			inventoryAdapter.removeItem(item.getDrawableID());
 			return true;
 		}
 		// else
@@ -723,8 +741,4 @@ public class ShoppeThread extends Thread
 		return null;
 	}
 	
-	public void changeFunds(int value)
-	{
-		funds += value;
-	}
 }

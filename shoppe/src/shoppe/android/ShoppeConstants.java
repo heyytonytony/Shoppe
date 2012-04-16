@@ -52,6 +52,7 @@ public final class ShoppeConstants {
 	public static final int FIRE_ARTISAN = 101;
 	public static final int BUY_PATRON = 102;
 	public static final int SELL_PATRON = 103;
+	public static final int ITEM_PRODUCED = 200;
 	
 	/** dialog IDs */
 	public static final int DIALOG_PAUSE = 0;
