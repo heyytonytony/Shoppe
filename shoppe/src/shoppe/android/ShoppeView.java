@@ -80,17 +80,21 @@ public class ShoppeView extends SurfaceView implements Callback
 
 		boolean retry = true;
 		thread.setRunning(false);
+		thread.killThread();
 		while(retry)
 		{
 			try
 			{
+				Log.d("surfaceDestroyed", "trying to join thread...");
 				thread.join();
+				Log.d("surfaceDestroyed", "thread joined!");
 				retry = false;
 			}
-			catch(InterruptedException ie)
+			catch(Exception e)
 			{
 			}
 		}
+		Log.d("surfaceDestroyed", "destroy successful");
 
 	}
 	

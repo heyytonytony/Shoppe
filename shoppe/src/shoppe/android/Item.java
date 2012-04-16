@@ -29,4 +29,9 @@ public class Item extends GridElement
 	{
 		return name;
 	}
+	
+	public int getDrawableID()
+	{
+		return super.getDrawableID();
+	}
 }

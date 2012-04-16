@@ -24,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -55,8 +56,6 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private static final int DIALOG_ARTISAN_2 = 2;
 	private static final int DIALOG_ARTISAN_3 = 3;
 	private static final int DIALOG_ARTISAN_4 = 4;
-	private static final int DIALOG_ADD_ITEM = 5;
-	private static final int DIALOG_REM_ITEM = 6;
 	
 	final Handler handler = new Handler()
 	{
@@ -131,6 +130,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		{
 			//showing paused dialog
 			showDialog(DIALOG_PAUSE);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 	}
@@ -142,24 +142,28 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		{
 			Log.d("Activity", "Artisan 1 pressed");
 			showDialog(DIALOG_ARTISAN_1);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan1Button)
 		{
 			Log.d("Activity", "Artisan 2 pressed");
 			showDialog(DIALOG_ARTISAN_2);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan2Button)
 		{
 			Log.d("Activity", "Artisan 3 pressed");
 			showDialog(DIALOG_ARTISAN_3);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan3Button)
 		{
 			Log.d("Activity", "Artisan 4 pressed");
 			showDialog(DIALOG_ARTISAN_4);
+			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 	}
@@ -214,6 +218,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	{
 		final Context mContext = shoppeView.getContext();
 		Button artCreateItem, artCancelItem, artFire, artDone;
+		
 		switch(id)
 		{
 			case DIALOG_PAUSE:
@@ -238,7 +243,9 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 1 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				//populate ImageViews with items in production queue, if any
+				
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -252,8 +259,10 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(0, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(0, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(0);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
 						        diaNest.dismiss();
 
 						    }
@@ -264,7 +273,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -282,6 +291,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(0, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(0);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(0);
 						        diaNest.dismiss();
 
 						    }
@@ -292,7 +303,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -308,6 +319,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						 	public void onClick(DialogInterface dialog, int id)
 						 	{
 						 		shoppeThread.fireArtisan(0);
+						 		dialog.dismiss();
 							}
 						});
 					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -324,15 +336,16 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan1 done", "ARTISAN 1 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
@@ -345,7 +358,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 2 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -359,8 +372,10 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(1, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(1, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(1);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						        diaNest.dismiss();
 
 						    }
@@ -371,7 +386,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -383,12 +398,14 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 2 Cancel Item");
-						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						builder.setItems(artisanPQCS, new DialogInterface.OnClickListener()
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(1, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(1);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(1);
 						        diaNest.dismiss();
 
 						    }
@@ -399,7 +416,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -415,6 +432,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						 	public void onClick(DialogInterface dialog, int id)
 						 	{
 						 		shoppeThread.fireArtisan(1);
+						 		dialog.dismiss();
 							}
 						});
 					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -431,15 +449,16 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan2 done", "ARTISAN 2 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
@@ -452,7 +471,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 3 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -466,8 +485,10 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(2, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(2, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(2);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						        diaNest.dismiss();
 
 						    }
@@ -478,7 +499,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -490,12 +511,14 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 						builder.setTitle("Artisan 3 Cancel Item");
-						builder.setItems(itemCS, new DialogInterface.OnClickListener()
+						builder.setItems(artisanPQCS, new DialogInterface.OnClickListener()
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(2, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(2);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(2);
 						        diaNest.dismiss();
 
 						    }
@@ -506,7 +529,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
 				artFire.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -522,6 +545,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						 	public void onClick(DialogInterface dialog, int id)
 						 	{
 						 		shoppeThread.fireArtisan(2);
+						 		dialog.dismiss();
 							}
 						});
 					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
@@ -538,47 +562,16 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artFire = (Button)dia.findViewById(R.id.artFire);
-				artFire.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View v)
-					{
-						//fire the bloke
-						diaNest = null;
-						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-						builder.setMessage("Are you sure you want to fire Artisan 4?");
-						builder.setCancelable(false);
-						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
-						{
-						 	public void onClick(DialogInterface dialog, int id)
-						 	{
-						 		shoppeThread.fireArtisan(3);
-							}
-						});
-					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
-					    {
-					    	public void onClick(DialogInterface dialog, int id)
-					    	{
-					    		dialog.cancel();
-					    	}
-					    });
-					    AlertDialog alert = builder.create();
-						diaNest = alert;
-						diaNest.show();
-						
-					}
-				});
-				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan3 done", "ARTISAN 3 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
@@ -591,7 +584,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia.setContentView(R.layout.artisan_dialog);
 				dia.setTitle("Artisan 4 Management");
 				
-				artCreateItem = (Button)dia.findViewById(R.id.artCreateItem);
+				artCreateItem = (Button)dia.findViewById(R.id.artisanCreateItem);
 				artCreateItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -605,8 +598,10 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						{
 						    public void onClick(DialogInterface dialog, int index)
 						    {
-						        shoppeThread.addProduction(3, itemList.get(index));
 						        Toast.makeText(mContext, itemList.get(index).getItemName() + " queued for production", Toast.LENGTH_SHORT).show();
+						        shoppeThread.addProduction(3, itemList.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(3);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
 						        diaNest.dismiss();
 
 						    }
@@ -617,7 +612,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artCancelItem = (Button)dia.findViewById(R.id.artCancelItem);
+				artCancelItem = (Button)dia.findViewById(R.id.artisanCancelItem);
 				artCancelItem.setOnClickListener(new OnClickListener()
 				{
 					@Override
@@ -635,6 +630,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 						    {
 						        Toast.makeText(mContext, artisanProductionQueue.get(index).getItemName() + " removed from production", Toast.LENGTH_SHORT).show();
 						        shoppeThread.removeProduction(3, artisanProductionQueue.get(index));
+								artisanPQCS = shoppeThread.getArtisantPQCS(3);
+								artisanProductionQueue = shoppeThread.getArtisanProductionQueue(3);
 						        diaNest.dismiss();
 
 						    }
@@ -645,22 +642,95 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					}
 				});
 				
-				artDone = (Button)dia.findViewById(R.id.artDone);
+				artFire = (Button)dia.findViewById(R.id.artisanFire);
+				artFire.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						//fire the bloke
+						diaNest = null;
+						AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+						builder.setMessage("Are you sure you want to fire Artisan 4?");
+						builder.setCancelable(false);
+						builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+						{
+						 	public void onClick(DialogInterface dialog, int id)
+						 	{
+						 		shoppeThread.fireArtisan(3);
+						 		dialog.dismiss();
+							}
+						});
+					    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+					    {
+					    	public void onClick(DialogInterface dialog, int id)
+					    	{
+					    		dialog.cancel();
+					    	}
+					    });
+					    AlertDialog alert = builder.create();
+						diaNest = alert;
+						diaNest.show();
+						
+					}
+				});
+				
+				artDone = (Button)dia.findViewById(R.id.artisanDone);
 				artDone.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View v)
 					{
 						//dismiss dialog and unpause game
-						shoppeThread.setRunning(true);
+						Log.d("artisan4 done", "ARTISAN 4 DONE");
 						dia.dismiss();
+						shoppeThread.setRunning(true);
 					}
 				});
 
 				break;
 		}
-
+		
 		return dia;
 
 	}
+	
+	protected void onPrepareDialog(int id, Dialog dialog)
+	{
+		if(id != DIALOG_PAUSE && artisanProductionQueue != null)
+		{
+			int size = Math.min(4, artisanProductionQueue.size());
+			ImageView[] images = new ImageView[size];
+			TextView[] text = new TextView[size];
+			TableRow prodQItemsImages = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
+			TableRow prodQItemsTexts = (TableRow)dialog.findViewById(R.id.artisanProductionRowText);
+			for(int index = 0; index < size; index++)
+			{
+				images[index] = (ImageView)prodQItemsImages.getChildAt(index);
+				images[index].setImageResource(artisanProductionQueue.get(index).getDrawableID());
+				text[index] = (TextView)prodQItemsTexts.getChildAt(index);
+				text[index].setText(artisanPQCS[index]);
+			}
+		}
+		
+		dia = dialog;
+	}
+	
+	/**
+     * Invoked when the Activity loses user focus.
+     */
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        finish();
+        System.gc();
+    }
+    
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        System.gc();
+    }
 }
