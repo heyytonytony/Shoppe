@@ -32,10 +32,11 @@ public class Artisan extends GridElement
 		if(numProduction > 0)
 		{
 			productionProgress++;
-			if(productionProgress == production.getFirst().productionCost)
+			if(productionProgress == production.peek().productionCost)
 			{
 				productionProgress = 0;
 				producedItem = production.remove();
+				numProduction--;
 				return true;
 			}
 		}
@@ -62,7 +63,7 @@ public class Artisan extends GridElement
 	 * @param item is the Item object to remove from the production queue.
 	 * @return the success state of removing the item. May return false if the item is not found.
 	 */
-	boolean removeProduction(Item item) 
+	boolean removeProduction(Item item)
 	{
 		numProduction--;
 		return production.remove(item);
@@ -99,6 +100,16 @@ public class Artisan extends GridElement
 			PQCS[i] = production.get(i).getItemName();
 		}
 		return PQCS;
+	}
+	
+	public Item getProducedItem()
+	{
+		return producedItem;
+	}
+	
+	public int getID()
+	{
+		return id;
 	}
 
 }

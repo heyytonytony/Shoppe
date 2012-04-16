@@ -1,5 +1,7 @@
 package shoppe.android;
 
+import java.util.Random;
+
 public final class ShoppeConstants {
 	/**
 	 * Contains global constants for game related identifiers
@@ -45,11 +47,42 @@ public final class ShoppeConstants {
 	public static final int left = 2;
 	public static final int right = 3;
 	
-	//message types
+	/** message types */
 	public static final int HIRE_ARTISAN = 100;
 	public static final int FIRE_ARTISAN = 101;
+	public static final int BUY_PATRON = 102;
+	public static final int SELL_PATRON = 103;
+	
+	/** dialog IDs */
+	public static final int DIALOG_PAUSE = 0;
+	public static final int DIALOG_ARTISAN_1 = 1;
+	public static final int DIALOG_ARTISAN_2 = 2;
+	public static final int DIALOG_ARTISAN_3 = 3;
+	public static final int DIALOG_ARTISAN_4 = 4;
+	public static final int DIALOG_BUY_PATRON = 5;
+	public static final int DIALOG_SELL_PATRON = 6;
+	public static final int DIALOG_PROSPECTIVE_ARTISAN = 7;
+	
+	/** patron buy texts */
+	private static final int CHAR_SEQUENCE_COUNT = 2;
+	private static final Random RN_GEN = new Random();
+	private static final CharSequence[] PATRON_BUY_TEXT0 = {
+		"Why hello there!  I would like to purchase your ",
+		"Good day, shopkeep.  Do you have a "
+	};
+	private static final CharSequence[] PATRON_BUY_TEXT1 = {
+		" please.",
+		" in stock today?"
+	};
 	
 	public static int getSubtypes(int elementType) {
 		return numSubtypes[elementType];
+	}
+	
+	public static CharSequence getBuyText(String itemName)
+	{
+		int index = RN_GEN.nextInt(CHAR_SEQUENCE_COUNT);
+		CharSequence cs = PATRON_BUY_TEXT0[index] + itemName + PATRON_BUY_TEXT1[index];
+		return cs;
 	}
 }

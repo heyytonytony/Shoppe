@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/patronDialog"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent">
+    
+    <TableLayout
+        android:id="@+id/patronImageTable"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*" >
+		
+        <TableRow
+            android:id="@+id/patronItemImageRow"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	        
+	        <ImageView
+	            android:id="@+id/patronItemImage"
+	            android:padding="2dp"
+	            android:layout_weight="1" />
+	            
+			<TextView
+			    android:id="@+id/patronItemText"
+			    android:padding="2dp"
+	            android:layout_weight="1" />
+	                
+	        
+        </TableRow>
+    </TableLayout>
+        
+    <TableLayout
+        android:id="@+id/patronButtonTable"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/patronImageTable"
+        android:paddingTop="10dp"
+        android:stretchColumns="*" >
+	        
+        <TableRow
+            android:id="@+id/patronButtonRow"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	        
+		    <Button
+		        android:id="@+id/patAgree"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" />
+		    
+		    <Button
+		        android:id="@+id/patDecline"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="Decline" />
+	    </TableRow>
+    </TableLayout>
+    
+</RelativeLayout>

@@ -46,19 +46,19 @@
 	        <TextView
 	            android:id="@+id/qText0"
 	            android:padding="2dp"
-	            android:gravity="center_horizontal" />
+	            android:gravity="center" />
 	        <TextView
 	            android:id="@+id/qText1"
 	            android:padding="2dp"
-	            android:gravity="center_horizontal" />
+	            android:gravity="center" />
 	        <TextView
 	            android:id="@+id/qText2"
 	            android:padding="2dp"
-	            android:gravity="center_horizontal" />
+	            android:gravity="center" />
 	        <TextView
 	            android:id="@+id/qText3"
 	            android:padding="2dp"
-	            android:gravity="center_horizontal" />
+	            android:gravity="center" />
         </TableRow>
     </TableLayout>
     

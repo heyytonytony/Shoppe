@@ -34,4 +34,9 @@ public class Item extends GridElement
 	{
 		return super.getDrawableID();
 	}
+	
+	public int getValue()
+	{
+		return value;
+	}
 }

@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,12 +49,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private LinkedList<Item> artisanProductionQueue;
 	private CharSequence[] artisanPQCS;
 	
-	/** dialog IDs */
-	private static final int DIALOG_PAUSE = 0;
-	private static final int DIALOG_ARTISAN_1 = 1;
-	private static final int DIALOG_ARTISAN_2 = 2;
-	private static final int DIALOG_ARTISAN_3 = 3;
-	private static final int DIALOG_ARTISAN_4 = 4;
+	/** item patron wants to buy/sell */
+	private Item patronItem;
 	
 	final Handler handler = new Handler()
 	{
@@ -78,6 +73,19 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				viewFlipper.showNext();
 				viewFlipper.showPrevious();
 				Log.d("fired artisan button", artisanButtons[msg.arg1] + "");
+				return;
+				
+			case ShoppeConstants.BUY_PATRON:
+				patronItem = (Item)msg.obj;
+				showDialog(ShoppeConstants.DIALOG_BUY_PATRON);
+				shoppeThread.setRunning(false);
+				return;
+				
+			case ShoppeConstants.SELL_PATRON:
+				patronItem = (Item)msg.obj;
+				showDialog(ShoppeConstants.DIALOG_SELL_PATRON);
+				shoppeThread.setRunning(false);
+				return;
 				
 			default:
 				return;
@@ -129,7 +137,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		if(button.getText().toString().equals(getResources().getString(R.string.pause)))
 		{
 			//showing paused dialog
-			showDialog(DIALOG_PAUSE);
+			showDialog(ShoppeConstants.DIALOG_PAUSE);
 			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
@@ -141,28 +149,28 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		if(button.getId() == R.id.artisan0Button)
 		{
 			Log.d("Activity", "Artisan 1 pressed");
-			showDialog(DIALOG_ARTISAN_1);
+			showDialog(ShoppeConstants.DIALOG_ARTISAN_1);
 			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan1Button)
 		{
 			Log.d("Activity", "Artisan 2 pressed");
-			showDialog(DIALOG_ARTISAN_2);
+			showDialog(ShoppeConstants.DIALOG_ARTISAN_2);
 			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan2Button)
 		{
 			Log.d("Activity", "Artisan 3 pressed");
-			showDialog(DIALOG_ARTISAN_3);
+			showDialog(ShoppeConstants.DIALOG_ARTISAN_3);
 			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
 		if(button.getId() == R.id.artisan3Button)
 		{
 			Log.d("Activity", "Artisan 4 pressed");
-			showDialog(DIALOG_ARTISAN_4);
+			showDialog(ShoppeConstants.DIALOG_ARTISAN_4);
 			Log.d("dialog info", dia.toString());
 			shoppeThread.setRunning(false);
 		}
@@ -219,9 +227,13 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 		final Context mContext = shoppeView.getContext();
 		Button artCreateItem, artCancelItem, artFire, artDone;
 		
+		Button patAgree, patDecline;
+		ImageView patItemImage;
+		TextView patItemText;
+		
 		switch(id)
 		{
-			case DIALOG_PAUSE:
+			case ShoppeConstants.DIALOG_PAUSE:
 				// game paused
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage("Game paused!").setCancelable(false).setNeutralButton("Unpause!", new DialogInterface.OnClickListener()
@@ -236,7 +248,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				dia = alert;
 				break;
 
-			case DIALOG_ARTISAN_1:
+			case ShoppeConstants.DIALOG_ARTISAN_1:
 				// artisan 1
 				dia = new Dialog(mContext);
 				
@@ -351,7 +363,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 				break;
 				
-			case DIALOG_ARTISAN_2:
+			case ShoppeConstants.DIALOG_ARTISAN_2:
 				// artisan 2
 				dia = new Dialog(mContext);
 				
@@ -464,7 +476,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 				break;
 				
-			case DIALOG_ARTISAN_3:
+			case ShoppeConstants.DIALOG_ARTISAN_3:
 				// artisan 3
 				dia = new Dialog(mContext);
 				
@@ -577,7 +589,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 
 				break;
 				
-			case DIALOG_ARTISAN_4:
+			case ShoppeConstants.DIALOG_ARTISAN_4:
 				// artisan 4
 				dia = new Dialog(mContext);
 				
@@ -689,6 +701,87 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				});
 
 				break;
+				
+			case ShoppeConstants.DIALOG_BUY_PATRON:
+				// patron who wants to buy something
+				dia = new Dialog(mContext);
+				
+				dia.setContentView(R.layout.patron_dialog);
+				dia.setTitle("Mr. Patron wants to buy something!");
+				
+				patItemImage = (ImageView)dia.findViewById(R.id.patronItemImage);
+				patItemImage.setImageResource(patronItem.getDrawableID());
+				
+				patItemText = (TextView)dia.findViewById(R.id.patronItemText);
+				patItemText.setText(ShoppeConstants.getBuyText(patronItem.getItemName()));
+				
+				patAgree = (Button)dia.findViewById(R.id.patAgree);
+				patAgree.setText("Make sale!");
+				patAgree.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						// TODO remove item from inventory, add funds
+						// perform sale
+						inventoryAdapter.removeItem(patronItem.getDrawableID());
+						shoppeThread.changeFunds(patronItem.getValue());
+						dia.dismiss();
+						shoppeThread.setRunning(true);
+						
+					}
+				});
+				
+				patDecline = (Button)dia.findViewById(R.id.patDecline);
+				patDecline.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						// decline sale
+						dia.dismiss();
+						shoppeThread.setRunning(true);
+						
+					}
+				});
+				
+				break;
+				
+			case ShoppeConstants.DIALOG_SELL_PATRON:
+				// patron who wants to sell something
+				dia = new Dialog(mContext);
+				
+				dia.setContentView(R.layout.patron_dialog);
+				dia.setTitle("Mr. Patron wants to sell something!");
+				
+				patAgree = (Button)dia.findViewById(R.id.patAgree);
+				patAgree.setText("Buy offer!");
+				patAgree.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						// buy item from patron
+						inventoryAdapter.addItem(patronItem.getDrawableID());
+						shoppeThread.changeFunds(-patronItem.getValue());
+						dia.dismiss();
+						shoppeThread.setRunning(true);
+					}
+				});
+				
+				patDecline = (Button)dia.findViewById(R.id.patDecline);
+				patDecline.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						// TODO Auto-generated method stub
+						// decline to buy item from patron
+						dia.dismiss();
+						shoppeThread.setRunning(true);
+					}
+				});
+				break;
 		}
 		
 		return dia;
@@ -697,7 +790,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	
 	protected void onPrepareDialog(int id, Dialog dialog)
 	{
-		if(id != DIALOG_PAUSE && artisanProductionQueue != null)
+		if(id > ShoppeConstants.DIALOG_PAUSE && id < ShoppeConstants.DIALOG_BUY_PATRON && artisanProductionQueue != null)
 		{
 			int size = Math.min(4, artisanProductionQueue.size());
 			ImageView[] images = new ImageView[size];

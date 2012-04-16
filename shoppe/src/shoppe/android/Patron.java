@@ -18,6 +18,8 @@ public class Patron extends GridElement
 	boolean interacting = false;
 	/** Describes if the patron is interested in leaving the shop **/
 	boolean exiting = false;
+	/** whether the patron is buying or selling an item */
+	int interactionType = ShoppeConstants.BUY_PATRON;
 
 	public Patron()
 	{
@@ -129,4 +131,13 @@ public class Patron extends GridElement
 		interacting = false;
 		//TODO: implement
 	}
+	
+	/**
+	 * get interaction type (patron wants to buy an item, or sell an item)
+	 */
+	public int getInteractionType()
+	{
+		return interactionType;
+	}
+	
 }

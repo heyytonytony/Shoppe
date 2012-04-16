@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.Toast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -169,6 +170,9 @@ public class ShoppeThread extends Thread
 	
 	/** Handler reference */
 	private Handler handler;
+	
+	/** Context reference */
+	private Context context;
 
 	public ShoppeThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
 	{
@@ -181,6 +185,7 @@ public class ShoppeThread extends Thread
 		exclamationBubble = context.getResources().getDrawable(R.drawable.exclamation);
 		inventoryAdapter = new ImageAdapter(context);
 		this.handler = handler;
+		this.context = context;
 		selectedX = selectedY = -1;
 		alive = true;
 		init();
@@ -278,6 +283,8 @@ public class ShoppeThread extends Thread
 				if (artisan.update() == true) {
 					item = artisan.producedItem;
 					inventoryList.add(item);
+					inventoryAdapter.addItem(item.getDrawableID());
+//					Toast.makeText(context, item.getItemName() + " completed by Artisan " + artisan.getID(), Toast.LENGTH_SHORT).show();
 				}
 			}
 			artisanBeginTime = System.currentTimeMillis();
@@ -327,7 +334,7 @@ public class ShoppeThread extends Thread
 		            msg.arg1 = iArt;
 		            msg.what = ShoppeConstants.HIRE_ARTISAN;
 		            handler.sendMessage(msg);
-		            Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
+		            Log.d("hired an artisan", "artisan number:" + msg.arg1 + ", total:" + artisanCount);
 		            return artisanList.add(new Artisan(iArt));
 		        }   
 		    }
@@ -349,7 +356,7 @@ public class ShoppeThread extends Thread
 				msg.arg1 = id;
 				msg.what = ShoppeConstants.FIRE_ARTISAN;
 				handler.sendMessage(msg);
-				Log.d("fired an artisan", "" + msg.arg1 + "   " + artisanCount);
+				Log.d("fired an artisan", "artisan number:" + msg.arg1 + ", total:" + artisanCount);
 				return true;
 			}
 		}
@@ -628,9 +635,17 @@ public class ShoppeThread extends Thread
 									patronsItem = itemList.get(itemIndex);
 									Log.v("patronUpdate", "Added item " + itemList.get(itemIndex).name + " at index " + itemIndex);
 									hireArtisan();//debuggery
+									
+									//interact with patron!
 									if(patron.startInteraction())
 									{
 										interactingPatron = patron;
+							            Message msg = handler.obtainMessage();
+							            msg.obj = patronsItem;
+							            msg.what = interactingPatron.getInteractionType();
+							            handler.sendMessage(msg);
+							            Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
+										
 									}
 									break;
 								}
@@ -706,5 +721,10 @@ public class ShoppeThread extends Thread
 			}
 		}
 		return null;
+	}
+	
+	public void changeFunds(int value)
+	{
+		funds += value;
 	}
 }

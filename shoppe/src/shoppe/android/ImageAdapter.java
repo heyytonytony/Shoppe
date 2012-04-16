@@ -1,5 +1,7 @@
 package shoppe.android;
 
+import java.util.LinkedList;
+
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,31 +13,13 @@ public class ImageAdapter extends BaseAdapter
 {
 	
 	 private Context mContext;
-	 private int[] items;
+	 private Integer[] items = {0};
+	 private LinkedList<Integer> ll;
 	 
 	 public ImageAdapter(Context context)
 	 {
 		 mContext = context;
-		 int[] pics = {R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron,
-				 R.drawable.patron, R.drawable.patron, R.drawable.patron};
-		 items = pics;
+		 ll = new LinkedList<Integer>();
 	 }
 
 	@Override
@@ -75,6 +59,18 @@ public class ImageAdapter extends BaseAdapter
         imageView.setImageResource(items[position]);
         return imageView;
 
+	}
+	
+	public void addItem(int itemDrawableID)
+	{
+		ll.add(itemDrawableID);
+		ll.toArray(items);
+	}
+	
+	public void removeItem(Integer itemDrawableID)
+	{
+		if(ll.remove(itemDrawableID))
+			ll.toArray(items);
 	}
 
 }
