@@ -24,6 +24,9 @@ public class ShoppeThread extends Thread
 {
 	/** Indicate whether the surface has been created and is ready to draw */
 	private boolean mRun = false;
+	
+	/** indicates end of activity */
+	private boolean alive;
 
 	/** Width of the grid of gridElements **/
 	private static int gridWidth = 8;
@@ -179,6 +182,7 @@ public class ShoppeThread extends Thread
 		inventoryAdapter = new ImageAdapter(context);
 		this.handler = handler;
 		selectedX = selectedY = -1;
+		alive = true;
 		init();
 	}
 
@@ -452,7 +456,7 @@ public class ShoppeThread extends Thread
 	@Override
 	public void run()
 	{
-		while(true)
+		while(true && alive)
 		{
 			if(mRun)
 			{
@@ -481,6 +485,11 @@ public class ShoppeThread extends Thread
 	public void setRunning(boolean b)
 	{
 		mRun = b;
+	}
+	
+	public void killThread()
+	{
+		alive = false;
 	}
 
 	private void drawGrid(Canvas canvas)
@@ -671,11 +680,31 @@ public class ShoppeThread extends Thread
 	
 	public LinkedList<Item> getArtisanProductionQueue(int artisanID)
 	{
-		return artisanList.get(artisanID).getProductionQueue();
+		Artisan artisan;
+		Iterator<Artisan> iterator = artisanList.iterator();
+		while(iterator.hasNext())
+		{
+			artisan = iterator.next();
+			if(artisan.id == artisanID)
+			{
+				return artisan.getProductionQueue();
+			}
+		}
+		return null;
 	}
 	
 	public CharSequence[] getArtisantPQCS(int artisanID)
 	{
-		return artisanList.get(artisanID).getPQCS();
+		Artisan artisan;
+		Iterator<Artisan> iterator = artisanList.iterator();
+		while(iterator.hasNext())
+		{
+			artisan = iterator.next();
+			if(artisan.id == artisanID)
+			{
+				return artisan.getPQCS();
+			}
+		}
+		return null;
 	}
 }
