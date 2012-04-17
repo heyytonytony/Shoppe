@@ -38,6 +38,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	private ImageView inv;
 	private Dialog dia = null, diaNest = null;
 	private ImageAdapter inventoryAdapter;
+	private boolean first = true;
 	
 	private int[] artisanButtons;
 	
@@ -52,6 +53,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	/** item patron wants to buy/sell */
 	private Item patronItem;
 	
+	/** handler */
 	final Handler handler = new Handler()
 	{
 		public void handleMessage(Message msg)
@@ -62,16 +64,18 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 			case ShoppeConstants.HIRE_ARTISAN:
 				artisanButton = (Button)findViewById(artisanButtons[msg.arg1]);
 				artisanButton.setVisibility(View.VISIBLE);
-				viewFlipper.showNext();
-				viewFlipper.showPrevious();
+				if(first)
+				{
+					viewFlipper.showNext();
+					viewFlipper.showPrevious();
+					first = false;
+				}
 				Log.d("hired artisan button", artisanButtons[msg.arg1] + "");
 				return;
 				
 			case ShoppeConstants.FIRE_ARTISAN:
 				artisanButton = (Button)findViewById(artisanButtons[msg.arg1]);
 				artisanButton.setVisibility(View.INVISIBLE);
-				viewFlipper.showNext();
-				viewFlipper.showPrevious();
 				Log.d("fired artisan button", artisanButtons[msg.arg1] + "");
 				return;
 				
@@ -132,7 +136,7 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	    
 	    itemList = shoppeThread.getItemList();
 	    itemCS = shoppeThread.getItemCS();
-
+	    
 	}
 
 	public void pauseButton(View view)
