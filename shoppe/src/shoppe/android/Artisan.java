@@ -2,7 +2,7 @@ package shoppe.android;
 
 import java.util.LinkedList;
 
-public class Artisan extends GridElement
+public class Artisan extends NPC
 {
 
 	int skills[];

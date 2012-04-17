@@ -61,7 +61,7 @@ public class ShoppeThread extends Thread
 	/** Drawable representing a patron **/
 	private Drawable patronDrawable;
 	/** Drawable representing the artisans **/
-	private Drawable[] artisanDrawable;
+	private Drawable artisanDrawable;
 
 	/** Drawable representing an open tile **/
 	private Drawable plainTile;
@@ -89,6 +89,9 @@ public class ShoppeThread extends Thread
 
 	/** The list of patrons in the shop **/
 	private LinkedList<Patron> patronList = new LinkedList<Patron>();
+	
+	/** The list of employable but not hired artisans in the shop **/
+	private LinkedList<Artisan> employableArtisanList = new LinkedList<Artisan>();
 
 	/** The list of artisans working in the shop **/
 	private LinkedList<Artisan> artisanList = new LinkedList<Artisan>();
@@ -101,16 +104,19 @@ public class ShoppeThread extends Thread
 
 	private SurfaceHolder surfaceHolder = null;
 
-	/** Used to keep track of update cycles **/
-	private long patronBeginTime;
+	/** Used to keep track of update cycles for NPCs visible on shop floor. Used for movement and such. **/
+	private long NPCLastUpdate;
 	
-	/** Used to keep track of update cycles **/
+	/** Used to keep track of update cycles for generating new NPCs entering the shop **/
+	private long NPCLastGenerate;
+	
+	/** Used to keep track of update cycles for item production **/
 	private long artisanBeginTime;
 
 	private boolean[][] tileOccupied = new boolean[gridHeight][gridWidth];
 
 	/** The amount of time in seconds that patron positions are updated **/
-	private static final int patronUpdateInterval = 2;
+	private static final int NPCUpdateInterval = 2;
 	
 	/** The amount of time in seconds that artisans are updated **/
 	private static final int artisanUpdateInterval = 10;
@@ -151,13 +157,19 @@ public class ShoppeThread extends Thread
 	private static int maxArtisans = 4;
 	
 	/** Maximum number of patrons in the shop at any time **/
-	private static int maxPatrons = 10;
+	private static int maxNPCs = 10;
 	
 	/** Upper limit of patron wealth when randomly generating the value **/
 	private static final int maxPatronWealth = 5000;
 	
 	/** Probability for new patrons entering the shop **/
-	private static double patronEnterProbability = 0.05;
+	private static double NPCEnterProbability = 0.05;
+	
+	/** The artisan-to-patron ratio for generating a new NPC **/
+	private static final double generateArtisanPatronRatio = 0.1;
+	
+	/** Describes if an employable artisan is in the shop. The shop can only have one prospective employee at a time **/
+	private boolean employableArtisanPresent = false;
 	
 	/** Shop reputation determines how frequent new patrons enter **/
 	private int reputation = 0;
@@ -180,6 +192,7 @@ public class ShoppeThread extends Thread
 		Resources res = context.getResources();
 		backgroundBitmap = BitmapFactory.decodeResource(res, R.drawable.background);
 		patronDrawable = context.getResources().getDrawable(R.drawable.patron);
+		artisanDrawable = context.getResources().getDrawable(R.drawable.artisan);
 		plainTile = context.getResources().getDrawable(R.drawable.tile);
 		counterTile = context.getResources().getDrawable(R.drawable.countertile);
 		exclamationBubble = context.getResources().getDrawable(R.drawable.exclamation);
@@ -194,7 +207,7 @@ public class ShoppeThread extends Thread
 	public void init()
 	{
 		randomGenerator = new Random();
-		patronBeginTime = System.currentTimeMillis();
+		NPCLastUpdate = System.currentTimeMillis();
 		// initialize occupied tiles on grid
 		for(int i = 0; i < gridHeight; i++)
 		{
@@ -323,13 +336,11 @@ public class ShoppeThread extends Thread
 		return false;
 	}
 	
-	public boolean hireArtisan()
+	public boolean hireArtisan(Artisan artisan)
 	{
 		if (artisanList.size() < maxArtisans)
 		{
-		    int iArt;
-		    for(iArt = 0; iArt < maxArtisans; iArt++)
-		    {
+		    int iArt = artisan.id;
 		        if(!employedArtisan[iArt])
 		        {
 		            artisanCount++;
@@ -339,9 +350,8 @@ public class ShoppeThread extends Thread
 		            msg.what = ShoppeConstants.HIRE_ARTISAN;
 		            handler.sendMessage(msg);
 		            Log.d("hired an artisan", "artisan number:" + msg.arg1 + ", total:" + artisanCount);
-		            return artisanList.add(new Artisan(iArt));
-		        }   
-		    }
+		            return artisanList.add(artisan);
+		        }
 		}
 		//else
 		return false;
@@ -368,87 +378,119 @@ public class ShoppeThread extends Thread
 		return false;
 	}
 
-	private void patronUpdate() {
-		Iterator<Patron> iterator = patronList.iterator();
-		Patron patron;
+	private void NPCUpdate(LinkedList<? extends NPC> npcList) {
+		Iterator<? extends NPC> iterator = npcList.iterator();
+		NPC npc;
 		boolean[] availableDirections = new boolean[4];
 		int xpos, ypos;
-		if (System.currentTimeMillis() > patronBeginTime + patronUpdateInterval * 1000) {
-			while (iterator.hasNext()) {
-				patron = iterator.next();
-				// figure out if we want to have this patron exit
-				if (Math.random() < patron.exitProbability) {
-					// exit this patron
-					tileOccupied[patron.ypos][patron.xpos] = false; 
-					iterator.remove();
+		while (iterator.hasNext()) {
+			npc = iterator.next();
+			// figure out if we want to have this patron exit
+			if (Math.random() < npc.exitProbability) {
+				// exit this patron
+				if (npc instanceof Artisan) {
+					employableArtisanPresent = false;
 				}
-				else {
-					for (int i = 0; i < 4; i++) {
-						availableDirections[i] = false;
+				tileOccupied[npc.ypos][npc.xpos] = false;
+				iterator.remove();
+			}
+			else {
+				for (int i = 0; i < 4; i++) {
+					availableDirections[i] = false;
+				}
+				// only potentially move patrons that are not interacting
+				// with
+				// the user
+				if (npc.interacting == false) {
+					xpos = npc.xpos;
+					ypos = npc.ypos;
+					if (ypos - 1 >= 0) {
+						availableDirections[ShoppeConstants.up] = !tileOccupied[ypos - 1][xpos];
 					}
-					// only potentially move patrons that are not interacting
-					// with
-					// the user
-					if (patron.interacting == false) {
-						xpos = patron.xpos;
-						ypos = patron.ypos;
-						if (ypos - 1 >= 0) {
-							availableDirections[ShoppeConstants.up] = !tileOccupied[ypos - 1][xpos];
-						}
-						if (ypos + 1 < gridHeight) {
-							availableDirections[ShoppeConstants.down] = !tileOccupied[ypos + 1][xpos];
-						}
-						if (xpos - 1 >= 0) {
-							availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos - 1];
-						}
-						if (xpos + 1 < gridWidth) {
-							availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos + 1];
-						}
-						int moveDirection = patron.move(availableDirections);
-						if (moveDirection > -1) { // update tileOccupied
-							tileOccupied[ypos][xpos] = false;
-							switch (moveDirection) {
-							case ShoppeConstants.up:
-								tileOccupied[ypos - 1][xpos] = true;
-								break;
-							case ShoppeConstants.down:
-								tileOccupied[ypos + 1][xpos] = true;
-								break;
-							case ShoppeConstants.left:
-								tileOccupied[ypos][xpos - 1] = true;
-								break;
-							case ShoppeConstants.right:
-								tileOccupied[ypos][xpos + 1] = true;
-								break;
-							}
+					if (ypos + 1 < gridHeight) {
+						availableDirections[ShoppeConstants.down] = !tileOccupied[ypos + 1][xpos];
+					}
+					if (xpos - 1 >= 0) {
+						availableDirections[ShoppeConstants.left] = !tileOccupied[ypos][xpos - 1];
+					}
+					if (xpos + 1 < gridWidth) {
+						availableDirections[ShoppeConstants.right] = !tileOccupied[ypos][xpos + 1];
+					}
+					int moveDirection = npc.move(availableDirections);
+					if (moveDirection > -1) { // update tileOccupied
+						tileOccupied[ypos][xpos] = false;
+						switch (moveDirection) {
+						case ShoppeConstants.up:
+							tileOccupied[ypos - 1][xpos] = true;
+							break;
+						case ShoppeConstants.down:
+							tileOccupied[ypos + 1][xpos] = true;
+							break;
+						case ShoppeConstants.left:
+							tileOccupied[ypos][xpos - 1] = true;
+							break;
+						case ShoppeConstants.right:
+							tileOccupied[ypos][xpos + 1] = true;
+							break;
 						}
 					}
 				}
 				// else do nothing
 			}
-
-			if (patronList.size() < maxPatrons && Math.random() < patronEnterProbability) { // determine if a new
-															// patron is to
-															// enter
-				// determine the initial position, assuming the entrance is at
-				// the bottom center of the screen
-				boolean openTile1, openTile2;
-				openTile1 = !tileOccupied[gridHeight - 1][gridWidth / 2];
-				openTile2 = !tileOccupied[gridHeight - 1][gridWidth / 2 - 1];
+		}
+	}
+	
+	public void generateNPCs() {
+		if (patronList.size() + employableArtisanList.size() < maxNPCs && Math.random() < NPCEnterProbability) {
+			// determine if a new NPC is to enter
+			// determine the initial position, assuming the entrance is at the bottom center of the screen
+			boolean openTile1, openTile2;
+			openTile1 = !tileOccupied[gridHeight - 1][gridWidth / 2];
+			openTile2 = !tileOccupied[gridHeight - 1][gridWidth / 2 - 1];
+			if (!employableArtisanPresent && generateArtisanPatronRatio < Math.random()) {
+				// make a new artisan
+				employableArtisanPresent = true;
+				// find first available position
+				int iArt;
+				for (iArt = 0; iArt < maxArtisans; iArt++) {
+					if (!employedArtisan[iArt]) {
+						break;
+					}
+				}
+				// find an open tile near the entrance
+				if (openTile1) {
+					employableArtisanList.add(new Artisan(iArt, gridHeight - 1, gridWidth / 2, randomGenerator
+							.nextInt(ShoppeConstants.numSubtypes.length)));
+					tileOccupied[gridHeight - 1][gridWidth / 2] = true;
+					Log.v("generateNPCs", "Artisan entered shop");
+				}
+				else if (openTile2) {
+					employableArtisanList.add(new Artisan(iArt, gridHeight - 1, gridWidth / 2 - 1, randomGenerator
+							.nextInt(ShoppeConstants.numSubtypes.length)));
+					tileOccupied[gridHeight - 1][gridWidth / 2 - 1] = true;
+					Log.v("generateNPCs", "Artisan entered shop");
+				}
+				else {
+					Log.v("generateNPCs", "New artisan can't enter shop");
+				}
+			}
+			else {
+				// make a new patron
 				if (openTile1) {
 					patronList.add(new Patron(gridHeight - 1, gridWidth / 2, randomGenerator.nextInt(ShoppeConstants.numSubtypes.length),
 							randomGenerator.nextInt(maxPatronWealth)));
-					tileOccupied[gridHeight-1][gridWidth/2] = true;
-				} else if (openTile2) {
+					tileOccupied[gridHeight - 1][gridWidth / 2] = true;
+				}
+				else if (openTile2) {
 					patronList.add(new Patron(gridHeight - 1, gridWidth / 2 - 1, randomGenerator.nextInt(ShoppeConstants.numSubtypes.length),
 							randomGenerator.nextInt(maxPatronWealth)));
-					tileOccupied[gridHeight-1][gridWidth/2-1] = true;
+					tileOccupied[gridHeight - 1][gridWidth / 2 - 1] = true;
 
-				} else {
-					Log.v("Patron Update", "New patron can't enter shop");
+				}
+				else {
+					Log.v("generateNPCs", "New patron can't enter shop");
 				}
 			}
-			patronBeginTime = System.currentTimeMillis();
 		}
 	}
 
@@ -485,7 +527,13 @@ public class ShoppeThread extends Thread
 		{
 			if(mRun)
 			{
-				patronUpdate();
+
+				if (System.currentTimeMillis() > NPCLastUpdate + NPCUpdateInterval * 1000) {
+					NPCUpdate(patronList);
+					NPCUpdate(employableArtisanList);
+					generateNPCs();
+					NPCLastUpdate = System.currentTimeMillis();
+				}
 				artisanUpdate();
 				Canvas canvas = null;
 				try
@@ -582,12 +630,28 @@ public class ShoppeThread extends Thread
 		}
 	}
 
+	private void drawEmployableArtisans(Canvas canvas)
+	{
+		int xloc, yloc;
+		Iterator<Artisan> iterator = employableArtisanList.iterator();
+		Artisan a;
+		// draw the patrons
+		while(iterator.hasNext())
+		{
+			a = iterator.next();
+			xloc = a.xpos * tileWidth + offsetX;
+			yloc = a.ypos * tileHeight + offsetY;
+			artisanDrawable.setBounds(xloc, yloc, xloc + tileWidth, yloc + tileHeight);
+			artisanDrawable.draw(canvas);
+		}
+	}
 	private void draw(Canvas canvas)
 	{
 		canvas.drawBitmap(backgroundBitmap, 0, 0, null);
 
 		drawGrid(canvas);
 		drawPatrons(canvas);
+		drawEmployableArtisans(canvas);
 		// border
 		borderPaint.setColor(Color.BLACK);
 		canvas.drawRect(8, 8, tileWidth * 2 + 2, 20 + tileHeight / 2 + 2, borderPaint);
@@ -601,8 +665,10 @@ public class ShoppeThread extends Thread
 	{
 		float inputX, inputY;
 		int tileX, tileY;
-		Iterator<Patron> iterator;
+		Iterator<Patron> pIterator;
+		Iterator<Artisan> aIterator;
 		Patron patron;
+		Artisan artisan;
 		// Log.v("onTouch","Input event " + event.getAction());
 		if(event.getAction() == MotionEvent.ACTION_DOWN)
 		{ // pressing input is received
@@ -628,16 +694,28 @@ public class ShoppeThread extends Thread
 				switch(inputMode)
 				{
 					case DEFAULT_INPUT:
-						// determine if there might exist a patron at the given
+						// determine if there might exist a NPC at the given
 						// tile
 						if(tileOccupied[tileY][tileX])
 						{
+							//search through potential artisan hires
+							aIterator = employableArtisanList.iterator();
+							while (aIterator.hasNext()) {
+								artisan = aIterator.next();
+								if (artisan.xpos == tileX && artisan.ypos == tileY) {
+									hireArtisan(artisan);
+									employableArtisanPresent = false;
+									aIterator.remove();
+									tileOccupied[tileY][tileX] = false;
+									break;
+								}
+							}
 							// search through patron list for potential patron
 							// at this location
-							iterator = patronList.iterator();
-							while(iterator.hasNext())
+							pIterator = patronList.iterator();
+							while(pIterator.hasNext())
 							{
-								patron = iterator.next();
+								patron = pIterator.next();
 								if(patron.xpos == tileX && patron.ypos == tileY)
 								{
 									// highlight the tile
@@ -652,7 +730,6 @@ public class ShoppeThread extends Thread
 									
 									patronsItem = itemList.get(itemIndex);
 									Log.v("patronUpdate", "Added item " + itemList.get(itemIndex).name + " at index " + itemIndex);
-									hireArtisan();//debuggery
 									
 									//interact with patron!
 									if(patron.startInteraction())
@@ -662,7 +739,7 @@ public class ShoppeThread extends Thread
 							            msg.obj = patronsItem;
 							            msg.what = interactingPatron.getInteractionType();
 							            handler.sendMessage(msg);
-							            Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
+							            //Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
 										
 									}
 									break;
