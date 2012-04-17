@@ -65,7 +65,6 @@ public final class ShoppeConstants {
 	public static final int DIALOG_PROSPECTIVE_ARTISAN = 7;
 	
 	/** patron buy texts */
-	private static final int CHAR_SEQUENCE_COUNT = 2;
 	private static final Random RN_GEN = new Random();
 	private static final CharSequence[] PATRON_BUY_TEXT0 = {
 		"Why hello there!  I would like to purchase your ",
@@ -82,7 +81,7 @@ public final class ShoppeConstants {
 	
 	public static CharSequence getBuyText(String itemName)
 	{
-		int index = RN_GEN.nextInt(CHAR_SEQUENCE_COUNT);
+		int index = RN_GEN.nextInt(PATRON_BUY_TEXT0.length);
 		CharSequence cs = PATRON_BUY_TEXT0[index] + itemName + PATRON_BUY_TEXT1[index];
 		return cs;
 	}

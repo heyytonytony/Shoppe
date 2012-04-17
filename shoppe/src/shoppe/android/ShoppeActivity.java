@@ -68,15 +68,14 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 				{
 					viewFlipper.showNext();
 					viewFlipper.showPrevious();
-					first = false;
 				}
-				Log.d("hired artisan button", artisanButtons[msg.arg1] + "");
+//				Log.d("hired artisan button", artisanButtons[msg.arg1] + "");
 				return;
 				
 			case ShoppeConstants.FIRE_ARTISAN:
 				artisanButton = (Button)findViewById(artisanButtons[msg.arg1]);
 				artisanButton.setVisibility(View.INVISIBLE);
-				Log.d("fired artisan button", artisanButtons[msg.arg1] + "");
+//				Log.d("fired artisan button", artisanButtons[msg.arg1] + "");
 				return;
 				
 			case ShoppeConstants.BUY_PATRON:
@@ -214,6 +213,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 					viewFlipper.setInAnimation(AccordionAnimation.inFromBottomAnimation());
 					viewFlipper.setOutAnimation(AccordionAnimation.outToTopAnimation());
 					viewFlipper.showPrevious();
+					if(first)
+						first = !first;
 				}
 				break;
 			}
@@ -803,6 +804,8 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 			TextView[] text = new TextView[size];
 			TableRow prodQItemsImages = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
 			TableRow prodQItemsTexts = (TableRow)dialog.findViewById(R.id.artisanProductionRowText);
+			artisanProductionQueue = shoppeThread.getArtisanProductionQueue(id - 1);
+			artisanPQCS = shoppeThread.getArtisantPQCS(id - 1);
 			for(int index = 0; index < size; index++)
 			{
 				images[index] = (ImageView)prodQItemsImages.getChildAt(index);

@@ -163,10 +163,10 @@ public class ShoppeThread extends Thread
 	private static final int maxPatronWealth = 5000;
 	
 	/** Probability for new patrons entering the shop **/
-	private static double NPCEnterProbability = 0.05;
+	private static double NPCEnterProbability = 0.55;
 	
-	/** The artisan-to-patron ratio for generating a new NPC **/
-	private static final double generateArtisanPatronRatio = 0.1;
+	/** The patron-to-artisan ratio for generating a new NPC **/
+	private static final double generatePatronArtisanRatio = 0.1;
 	
 	/** Describes if an employable artisan is in the shop. The shop can only have one prospective employee at a time **/
 	private boolean employableArtisanPresent = false;
@@ -237,6 +237,11 @@ public class ShoppeThread extends Thread
 		// add patrons
 		addPatron(new Patron(3, 4, ShoppeConstants.potion, 100));
 		addPatron(new Patron(2, 3, ShoppeConstants.armor, 100));
+		
+		// adding first artisan
+		employableArtisanList.add(new Artisan(0, 7, 0, randomGenerator.nextInt(ShoppeConstants.numSubtypes.length)));
+		employableArtisanPresent = true;
+		tileOccupied[0][7] = true;
 
 		// test
 		patronList.getLast().exclamation = true;
@@ -447,7 +452,7 @@ public class ShoppeThread extends Thread
 			boolean openTile1, openTile2;
 			openTile1 = !tileOccupied[gridHeight - 1][gridWidth / 2];
 			openTile2 = !tileOccupied[gridHeight - 1][gridWidth / 2 - 1];
-			if (!employableArtisanPresent && generateArtisanPatronRatio < Math.random()) {
+			if (!employableArtisanPresent && generatePatronArtisanRatio < Math.random() && artisanCount < 4) {
 				// make a new artisan
 				employableArtisanPresent = true;
 				// find first available position
@@ -459,13 +464,13 @@ public class ShoppeThread extends Thread
 				}
 				// find an open tile near the entrance
 				if (openTile1) {
-					employableArtisanList.add(new Artisan(iArt, gridHeight - 1, gridWidth / 2, randomGenerator
+					employableArtisanList.add(new Artisan(iArt, gridWidth / 2, gridHeight - 1, randomGenerator
 							.nextInt(ShoppeConstants.numSubtypes.length)));
 					tileOccupied[gridHeight - 1][gridWidth / 2] = true;
 					Log.v("generateNPCs", "Artisan entered shop");
 				}
 				else if (openTile2) {
-					employableArtisanList.add(new Artisan(iArt, gridHeight - 1, gridWidth / 2 - 1, randomGenerator
+					employableArtisanList.add(new Artisan(iArt, gridWidth / 2 - 1, gridHeight - 1, randomGenerator
 							.nextInt(ShoppeConstants.numSubtypes.length)));
 					tileOccupied[gridHeight - 1][gridWidth / 2 - 1] = true;
 					Log.v("generateNPCs", "Artisan entered shop");
@@ -563,6 +568,7 @@ public class ShoppeThread extends Thread
 	public void killThread()
 	{
 		alive = false;
+		artisanCount = 0;
 	}
 
 	private void drawGrid(Canvas canvas)
@@ -739,7 +745,6 @@ public class ShoppeThread extends Thread
 							            msg.obj = patronsItem;
 							            msg.what = interactingPatron.getInteractionType();
 							            handler.sendMessage(msg);
-							            //Log.d("hired an artisan", "" + msg.arg1 + "   " + artisanCount);
 										
 									}
 									break;
