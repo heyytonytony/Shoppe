@@ -16,8 +16,8 @@
     
     <ImageView
         android:id="@+id/GameTitle"
-		android:layout_width="472dp"
-		android:layout_height="149dp"
+		android:layout_width="391dp"
+		android:layout_height="147dp"
 		android:layout_centerHorizontal="true"
         android:src="@drawable/game_title" >
     </ImageView>
@@ -28,7 +28,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:layout_centerHorizontal="true"
-		android:layout_marginTop="130dp" >
+		android:layout_marginTop="140dp" >
 	    
 	    <Button
 			android:id="@+id/StartGame"
@@ -40,7 +40,7 @@
 	    <TextView
 			android:id="@+id/spacer0"
 			android:layout_width="wrap_content"
-			android:layout_height="20dp" >
+			android:layout_height="15dp" >
 		</TextView>
 		
 	    <Button

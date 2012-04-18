@@ -18,7 +18,7 @@
 	        
 	        <ImageView
 	            android:id="@+id/queue0"
-	            android:padding="2dp" />"
+	            android:padding="2dp" />
 	        <ImageView
 	            android:id="@+id/queue1"
 	            android:padding="2dp" />
@@ -29,14 +29,6 @@
 	            android:id="@+id/queue3"
 	            android:padding="2dp" />
         </TableRow>
-    </TableLayout>
-    
-    <TableLayout
-        android:id="@+id/artisanProductionTextTable"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*"
-        android:layout_alignBottom="@id/artisanProductionImageTable" >
         
         <TableRow
             android:id="@+id/artisanProductionRowText"

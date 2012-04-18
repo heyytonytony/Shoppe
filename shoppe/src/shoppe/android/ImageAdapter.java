@@ -64,13 +64,22 @@ public class ImageAdapter extends BaseAdapter
 	public void addItem(int itemDrawableID)
 	{
 		ll.add(itemDrawableID);
+		items = new Integer[ll.size()];
 		ll.toArray(items);
 	}
 	
 	public void removeItem(Integer itemDrawableID)
 	{
 		if(ll.remove(itemDrawableID))
-			ll.toArray(items);
+		{
+			if(ll.size() > 0)
+			{
+				items = new Integer[ll.size()];
+				ll.toArray(items);
+			}
+			else
+				items = new Integer[1];
+		}
 	}
 
 }

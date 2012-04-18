@@ -163,10 +163,10 @@ public class ShoppeThread extends Thread
 	private static final int maxPatronWealth = 5000;
 	
 	/** Probability for new patrons entering the shop **/
-	private static double NPCEnterProbability = 0.55;
+	private static double NPCEnterProbability = 0.25;
 	
 	/** The patron-to-artisan ratio for generating a new NPC **/
-	private static final double generatePatronArtisanRatio = 0.1;
+	private static final double generatePatronArtisanRatio = 0.9;
 	
 	/** Describes if an employable artisan is in the shop. The shop can only have one prospective employee at a time **/
 	private boolean employableArtisanPresent = false;
@@ -307,6 +307,8 @@ public class ShoppeThread extends Thread
 					msg.what = ShoppeConstants.ITEM_PRODUCED;
 					msg.obj = item;
 					handler.sendMessage(msg);
+					Log.d("artisan update","artisan " + msg.arg1 + " created " + item.getItemName());
+					Log.d("artisan update","inventory now has " + inventoryAdapter.getCount() + " items");
 				}
 			}
 			artisanBeginTime = System.currentTimeMillis();

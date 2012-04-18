@@ -75,6 +75,11 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 			case ShoppeConstants.FIRE_ARTISAN:
 				artisanButton = (Button)findViewById(artisanButtons[msg.arg1]);
 				artisanButton.setVisibility(View.INVISIBLE);
+				if(first)
+				{
+					viewFlipper.showNext();
+					viewFlipper.showPrevious();
+				}
 //				Log.d("fired artisan button", artisanButtons[msg.arg1] + "");
 				return;
 				
@@ -799,19 +804,26 @@ public class ShoppeActivity extends Activity implements OnTouchListener
 	{
 		if(id > ShoppeConstants.DIALOG_PAUSE && id < ShoppeConstants.DIALOG_BUY_PATRON && artisanProductionQueue != null)
 		{
-			int size = Math.min(4, artisanProductionQueue.size());
-			ImageView[] images = new ImageView[size];
-			TextView[] text = new TextView[size];
-			TableRow prodQItemsImages = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
-			TableRow prodQItemsTexts = (TableRow)dialog.findViewById(R.id.artisanProductionRowText);
 			artisanProductionQueue = shoppeThread.getArtisanProductionQueue(id - 1);
 			artisanPQCS = shoppeThread.getArtisantPQCS(id - 1);
+			int size = Math.min(4, artisanProductionQueue.size());
+			ImageView[] images = new ImageView[4];
+			TextView[] text = new TextView[4];
+			TableRow prodQItemsImages = (TableRow)dialog.findViewById(R.id.artisanProductionRow);
+			TableRow prodQItemsTexts = (TableRow)dialog.findViewById(R.id.artisanProductionRowText);
 			for(int index = 0; index < size; index++)
 			{
 				images[index] = (ImageView)prodQItemsImages.getChildAt(index);
 				images[index].setImageResource(artisanProductionQueue.get(index).getDrawableID());
 				text[index] = (TextView)prodQItemsTexts.getChildAt(index);
 				text[index].setText(artisanPQCS[index]);
+			}
+			for(int index = size; index < 4; index++)
+			{
+				images[index] = (ImageView)prodQItemsImages.getChildAt(index);
+				images[index].setImageResource(0);
+				text[index] = (TextView)prodQItemsTexts.getChildAt(index);
+				text[index].setText("");
 			}
 		}
 		
